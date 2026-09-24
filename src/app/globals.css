@@ -8,8 +8,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-space-mono);
-  --font-heading: var(--font-space-grotesk);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-heading);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -42,6 +42,9 @@
   --color-cargo: var(--cargo);
   --color-cargo-foreground: var(--cargo-foreground);
   --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-md: calc(var(--radius) * 0.7);
   --radius-lg: var(--radius);
@@ -82,7 +85,15 @@
      component color system (map pins, SVG logo, chart lines). */
   --cargo: oklch(0.6 0.155 42);
   --cargo-foreground: oklch(0.99 0.004 90);
-  --ink: oklch(0.2 0.014 260);
+  /* Deep navy — the platform's second brand color, used for dark bands
+     (hero overlays, footers, stat strips) so the site reads as a real
+     logistics brand rather than a single-accent SaaS template. */
+  --ink: oklch(0.28 0.075 258);
+  --ink-foreground: oklch(0.97 0.006 250);
+  /* Warm gold — a third accent reserved for highlights inside dark
+     sections (badges, checkmarks, small stats) where orange would clash. */
+  --gold: oklch(0.8 0.15 85);
+  --gold-foreground: oklch(0.22 0.03 85);
   --sidebar: oklch(0.19 0.016 260);
   --sidebar-foreground: oklch(0.85 0.006 260);
   --sidebar-primary: oklch(0.6 0.155 42);
@@ -119,7 +130,10 @@
   --chart-5: oklch(0.68 0.03 260);
   --cargo: oklch(0.66 0.15 44);
   --cargo-foreground: oklch(0.16 0.014 260);
-  --ink: oklch(0.96 0.004 260);
+  --ink: oklch(0.24 0.07 258);
+  --ink-foreground: oklch(0.97 0.006 250);
+  --gold: oklch(0.78 0.14 85);
+  --gold-foreground: oklch(0.22 0.03 85);
   --sidebar: oklch(0.13 0.012 260);
   --sidebar-foreground: oklch(0.85 0.006 260);
   --sidebar-primary: oklch(0.66 0.15 44);
