@@ -3,8 +3,10 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { MoreHorizontal, ExternalLink, Archive, ArchiveRestore, Trash2, Pencil } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { MoreHorizontal, ExternalLink, Archive, ArchiveRestore, Trash2, Pencil, PackageSearch } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,6 +49,7 @@ export function ShipmentTable({
 }) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [isPending, startTransition] = useTransition();
+  const reduceMotion = useReducedMotion();
 
   const allSelected = shipments.length > 0 && selected.size === shipments.length;
 
@@ -108,13 +111,19 @@ export function ShipmentTable({
           <TableBody>
             {shipments.length === 0 && (
               <TableRow>
-                <TableCell colSpan={10} className="py-8 text-center text-muted-foreground">
-                  No shipments match your filters.
+                <TableCell colSpan={10}>
+                  <EmptyState icon={PackageSearch} title="No shipments match your filters" description="Try adjusting or clearing your search and filters." />
                 </TableCell>
               </TableRow>
             )}
-            {shipments.map((s) => (
-              <TableRow key={s.id}>
+            {shipments.map((s, i) => (
+              <motion.tr
+                key={s.id}
+                initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: Math.min(i, 8) * 0.02, ease: "easeOut" }}
+                className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+              >
                 {canArchive && (
                   <TableCell>
                     <Checkbox checked={selected.has(s.id)} onCheckedChange={() => toggleOne(s.id)} />
@@ -149,7 +158,7 @@ export function ShipmentTable({
                     canDelete={canDelete}
                   />
                 </TableCell>
-              </TableRow>
+              </motion.tr>
             ))}
           </TableBody>
         </Table>

@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { StaggerGroup, StaggerItem } from "@/components/motion/fade-in";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default async function SuperAdminDashboardPage() {
   const stats = await getSuperAdminDashboard();
@@ -19,18 +21,34 @@ export default async function SuperAdminDashboardPage() {
         <p className="text-muted-foreground">Everything happening across ShipTrack.</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total merchants" value={stats.totalMerchants} icon={Building2} tone="neutral" trend={stats.merchantsTrend} />
-        <StatCard label="Active merchants" value={stats.activeMerchants} icon={Building2} tone="success" />
-        <StatCard label="Total shipments" value={stats.totalShipments} icon={Package} tone="neutral" trend={stats.shipmentsTrend} />
-        <StatCard label="Shipments today" value={stats.shipmentsToday} icon={CalendarDays} tone="info" />
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="In transit" value={stats.inTransit} icon={Truck} tone="info" />
-        <StatCard label="Delivered" value={stats.delivered} icon={CheckCircle2} tone="success" />
-        <StatCard label="Delayed" value={stats.delayed} icon={AlertTriangle} tone="warning" />
-        <StatCard label="Total messages" value={stats.totalMessages} icon={MessageSquare} tone="info" />
-      </div>
+      <StaggerGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerItem>
+          <StatCard label="Total merchants" value={stats.totalMerchants} icon={Building2} tone="neutral" trend={stats.merchantsTrend} />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Active merchants" value={stats.activeMerchants} icon={Building2} tone="success" />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Total shipments" value={stats.totalShipments} icon={Package} tone="neutral" trend={stats.shipmentsTrend} />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Shipments today" value={stats.shipmentsToday} icon={CalendarDays} tone="info" />
+        </StaggerItem>
+      </StaggerGroup>
+      <StaggerGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerItem>
+          <StatCard label="In transit" value={stats.inTransit} icon={Truck} tone="info" />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Delivered" value={stats.delivered} icon={CheckCircle2} tone="success" />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Delayed" value={stats.delayed} icon={AlertTriangle} tone="warning" />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Total messages" value={stats.totalMessages} icon={MessageSquare} tone="info" />
+        </StaggerItem>
+      </StaggerGroup>
 
       <LiveShipmentsMap basePath="/super-admin/shipments" />
 
@@ -80,12 +98,17 @@ export default async function SuperAdminDashboardPage() {
             <TableBody>
               {stats.recentMerchants.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground">
-                    No merchants yet.{" "}
-                    <Link href="/super-admin/merchants/new" className="text-primary underline">
-                      Create the first one
-                    </Link>
-                    .
+                  <TableCell colSpan={5}>
+                    <EmptyState
+                      icon={Building2}
+                      title="No merchants yet"
+                      description="Create the first merchant account to get started."
+                      action={
+                        <Button size="sm" render={<Link href="/super-admin/merchants/new" />}>
+                          Create merchant
+                        </Button>
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               )}
@@ -93,7 +116,7 @@ export default async function SuperAdminDashboardPage() {
                 <TableRow key={m.id}>
                   <TableCell>
                     <Link href={`/super-admin/merchants/${m.id}`} className="font-medium hover:underline">
-                      {m.businessName}
+                      {m.businessName ?? m.merchantCode}
                     </Link>
                   </TableCell>
                   <TableCell className="font-mono text-xs">{m.merchantCode}</TableCell>

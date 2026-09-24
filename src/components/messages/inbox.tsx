@@ -5,11 +5,14 @@ import useSWR from "swr";
 import { toast } from "sonner";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { Search, Archive, ArchiveRestore, Trash2, ExternalLink } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, Archive, ArchiveRestore, Trash2, ExternalLink, MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Select,
   SelectContent,
@@ -68,8 +71,23 @@ export function MessagesInbox({ readOnly = false }: { readOnly?: boolean }) {
           </Select>
         </div>
         <ScrollArea className="flex-1">
+          {!conversations && (
+            <div className="space-y-3 p-4">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="space-y-2">
+                  <Skeleton className="h-4 w-2/3" />
+                  <Skeleton className="h-3 w-1/3" />
+                  <Skeleton className="h-3 w-full" />
+                </div>
+              ))}
+            </div>
+          )}
           {conversations?.length === 0 && (
-            <p className="p-4 text-sm text-muted-foreground">No conversations found.</p>
+            <EmptyState
+              icon={MessageSquare}
+              title="No messages yet"
+              description="Customer conversations will appear here."
+            />
           )}
           <ul className="divide-y">
             {conversations?.map((c) => {
@@ -153,7 +171,22 @@ function ConversationThread({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
-  if (!conversation) return <div className="p-4 text-sm text-muted-foreground">Loading...</div>;
+  if (!conversation)
+    return (
+      <div className="space-y-4 p-4">
+        <div className="flex items-center justify-between border-b pb-3">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-3 w-48" />
+          </div>
+        </div>
+        <div className="space-y-3">
+          <Skeleton className="ml-auto h-10 w-2/3 rounded-lg" />
+          <Skeleton className="h-10 w-1/2 rounded-lg" />
+          <Skeleton className="ml-auto h-10 w-3/5 rounded-lg" />
+        </div>
+      </div>
+    );
 
   return (
     <div className="flex h-full flex-col">
@@ -216,22 +249,30 @@ function ConversationThread({
 
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-3">
-          {conversation.messages.map((m) => (
-            <div key={m.id} className={m.senderType === "MERCHANT" ? "text-right" : "text-left"}>
-              <div
-                className={cn(
-                  "inline-block max-w-md rounded-lg px-3 py-2 text-sm",
-                  m.senderType === "MERCHANT" ? "bg-primary text-primary-foreground" : "bg-muted",
-                )}
+          <AnimatePresence initial={false}>
+            {conversation.messages.map((m) => (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className={m.senderType === "MERCHANT" ? "text-right" : "text-left"}
               >
-                {m.body}
-              </div>
-              <p className="mt-1 text-[11px] text-muted-foreground">
-                {m.senderType === "MERCHANT" ? m.senderUser?.name ?? "Merchant" : conversation.customer.name} ·{" "}
-                {formatDistanceToNow(new Date(m.createdAt), { addSuffix: true })}
-              </p>
-            </div>
-          ))}
+                <div
+                  className={cn(
+                    "inline-block max-w-md rounded-lg px-3 py-2 text-sm",
+                    m.senderType === "MERCHANT" ? "bg-primary text-primary-foreground" : "bg-muted",
+                  )}
+                >
+                  {m.body}
+                </div>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  {m.senderType === "MERCHANT" ? m.senderUser?.name ?? "Merchant" : conversation.customer.name} ·{" "}
+                  {formatDistanceToNow(new Date(m.createdAt), { addSuffix: true })}
+                </p>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </ScrollArea>
 

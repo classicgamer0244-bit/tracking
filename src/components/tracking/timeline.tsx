@@ -1,9 +1,14 @@
+"use client";
+
 import { Check, Circle, AlertTriangle } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ShipmentStatus } from "@prisma/client";
 import { SHIPMENT_STATUS_LABELS, isException, statusIndex } from "@/lib/shipment-status";
 import { cn } from "@/lib/utils";
 
 export function MilestoneStepper({ currentStatus }: { currentStatus: ShipmentStatus }) {
+  const reduceMotion = useReducedMotion();
+
   if (isException(currentStatus)) {
     return (
       <div className="flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
@@ -32,21 +37,45 @@ export function MilestoneStepper({ currentStatus }: { currentStatus: ShipmentSta
       {milestones.map((status, i) => {
         const idx = statusIndex(status);
         const done = currentIdx >= idx;
+        const lineAfterDone = i === milestones.length - 1 ? false : currentIdx > idx;
         const isCurrent = status === currentStatus || (i === milestones.length - 1 ? false : idx <= currentIdx && statusIndex(milestones[i + 1]) > currentIdx);
         return (
           <div key={status} className="flex min-w-[100px] flex-1 flex-col items-center text-center">
             <div className="flex w-full items-center">
-              <div className={cn("h-0.5 flex-1", i === 0 ? "opacity-0" : done ? "bg-primary" : "bg-border")} />
-              <div
-                className={cn(
-                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-xs",
-                  done ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-muted-foreground",
-                  isCurrent && "ring-4 ring-primary/20",
-                )}
-              >
-                {done ? <Check className="h-3.5 w-3.5" /> : <Circle className="h-2 w-2 fill-current" />}
+              <div className={cn("relative h-0.5 flex-1 overflow-hidden bg-border", i === 0 && "opacity-0")}>
+                <motion.div
+                  className="absolute inset-y-0 left-0 bg-primary"
+                  initial={false}
+                  animate={{ width: done ? "100%" : "0%" }}
+                  transition={reduceMotion ? { duration: 0 } : { duration: 0.5, ease: "easeOut" }}
+                />
               </div>
-              <div className={cn("h-0.5 flex-1", i === milestones.length - 1 ? "opacity-0" : currentIdx > idx ? "bg-primary" : "bg-border")} />
+              <div className="relative">
+                {isCurrent && !reduceMotion && (
+                  <motion.span
+                    className="absolute inset-0 rounded-full bg-primary/30"
+                    animate={{ scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }}
+                    transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                )}
+                <div
+                  className={cn(
+                    "relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-xs",
+                    done ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-muted-foreground",
+                    isCurrent && "ring-4 ring-primary/20",
+                  )}
+                >
+                  {done ? <Check className="h-3.5 w-3.5" /> : <Circle className="h-2 w-2 fill-current" />}
+                </div>
+              </div>
+              <div className={cn("relative h-0.5 flex-1 overflow-hidden bg-border", i === milestones.length - 1 && "opacity-0")}>
+                <motion.div
+                  className="absolute inset-y-0 left-0 bg-primary"
+                  initial={false}
+                  animate={{ width: lineAfterDone ? "100%" : "0%" }}
+                  transition={reduceMotion ? { duration: 0 } : { duration: 0.5, ease: "easeOut", delay: 0.15 }}
+                />
+              </div>
             </div>
             <span className={cn("mt-2 px-1 text-xs", done ? "font-medium text-foreground" : "text-muted-foreground")}>
               {SHIPMENT_STATUS_LABELS[status]}

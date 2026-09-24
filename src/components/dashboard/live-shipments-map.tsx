@@ -10,7 +10,7 @@ import {
   ZoomableGroup,
   Marker,
 } from "react-simple-maps";
-import { Plus, Minus, RotateCcw, Radio, X, ExternalLink } from "lucide-react";
+import { Plus, Minus, RotateCcw, Radio, X, ExternalLink, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getLiveMapShipments, type MapShipment } from "@/actions/map";
 import { SHIPMENT_STATUS_LABELS } from "@/lib/shipment-status";
@@ -185,7 +185,8 @@ export function LiveShipmentsMap({ basePath }: { basePath: string }) {
         </div>
 
         {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/60 text-sm text-muted-foreground">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/60 text-sm text-muted-foreground backdrop-blur-[1px]">
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />
             Loading live positions...
           </div>
         )}

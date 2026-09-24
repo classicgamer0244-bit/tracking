@@ -20,6 +20,8 @@ import { ShipmentStatusBadge } from "@/components/tracking/status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { StaggerGroup, StaggerItem } from "@/components/motion/fade-in";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default async function MerchantDashboardPage() {
   const user = await requireMerchantUser();
@@ -37,18 +39,34 @@ export default async function MerchantDashboardPage() {
 
       {!merchant?.businessName && <ProfileIncompleteBanner />}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total shipments" value={stats.total} icon={Package} tone="neutral" trend={stats.shipmentsTrend} />
-        <StatCard label="In transit" value={stats.inTransit} icon={Truck} tone="info" />
-        <StatCard label="Delivered" value={stats.delivered} icon={CheckCircle2} tone="success" trend={stats.deliveredTrend} />
-        <StatCard label="Unread messages" value={stats.unreadMessages} icon={MessageSquare} tone="info" />
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Active" value={stats.active} icon={Activity} tone="info" />
-        <StatCard label="Out for delivery" value={stats.outForDelivery} icon={Clock} tone="warning" />
-        <StatCard label="Delayed" value={stats.delayed} icon={AlertTriangle} tone="warning" />
-        <StatCard label="Cancelled / returned" value={stats.cancelled} icon={XCircle} tone="danger" />
-      </div>
+      <StaggerGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerItem>
+          <StatCard label="Total shipments" value={stats.total} icon={Package} tone="neutral" trend={stats.shipmentsTrend} />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="In transit" value={stats.inTransit} icon={Truck} tone="info" />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Delivered" value={stats.delivered} icon={CheckCircle2} tone="success" trend={stats.deliveredTrend} />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Unread messages" value={stats.unreadMessages} icon={MessageSquare} tone="info" />
+        </StaggerItem>
+      </StaggerGroup>
+      <StaggerGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerItem>
+          <StatCard label="Active" value={stats.active} icon={Activity} tone="info" />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Out for delivery" value={stats.outForDelivery} icon={Clock} tone="warning" />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Delayed" value={stats.delayed} icon={AlertTriangle} tone="warning" />
+        </StaggerItem>
+        <StaggerItem>
+          <StatCard label="Cancelled / returned" value={stats.cancelled} icon={XCircle} tone="danger" />
+        </StaggerItem>
+      </StaggerGroup>
 
       <LiveShipmentsMap basePath="/merchant/shipments" />
 
@@ -98,12 +116,17 @@ export default async function MerchantDashboardPage() {
             <TableBody>
               {stats.recentShipments.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground">
-                    No shipments yet.{" "}
-                    <Link href="/merchant/shipments/new" className="text-primary underline">
-                      Create your first one
-                    </Link>
-                    .
+                  <TableCell colSpan={5}>
+                    <EmptyState
+                      icon={Package}
+                      title="No shipments yet"
+                      description="Create your first shipment to start tracking deliveries."
+                      action={
+                        <Button size="sm" render={<Link href="/merchant/shipments/new" />}>
+                          Create shipment
+                        </Button>
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               )}
