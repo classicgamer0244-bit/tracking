@@ -38,7 +38,6 @@ const MATRIX: Record<StaffRole | "OWNER", Set<MerchantAction>> = {
     "message:reply",
     "message:archive",
     "message:delete",
-    "staff:manage",
     "settings:manage",
   ]),
   MANAGER: new Set([
@@ -51,7 +50,6 @@ const MATRIX: Record<StaffRole | "OWNER", Set<MerchantAction>> = {
     "message:view",
     "message:reply",
     "message:archive",
-    "staff:manage",
   ]),
   SHIPMENT_MANAGER: new Set([
     "shipment:create",

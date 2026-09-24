@@ -287,30 +287,19 @@ d("Tenant isolation, shipment lifecycle, and messaging (requires DATABASE_URL)",
     expect(goodReply.success).toBe(true);
   });
 
-  it("lets a merchant owner create staff and enforces unique usernames/emails", async () => {
+  it("forbids a merchant owner from creating staff", async () => {
     mockSessionState.user = ownerA;
-    const result = await createStaffAction(
-      { success: false },
-      formData({
-        name: "New Hire",
-        email: `newhire-${testTag}@test.local`,
-        username: `newhire-${testTag}`,
-        password: "Test1234!",
-        staffRole: "SHIPMENT_MANAGER",
-      }),
-    );
-    expect(result.success).toBe(true);
-
-    const duplicate = await createStaffAction(
-      { success: false },
-      formData({
-        name: "Duplicate",
-        email: `newhire-${testTag}@test.local`,
-        username: `someone-else-${testTag}`,
-        password: "Test1234!",
-        staffRole: "SHIPMENT_MANAGER",
-      }),
-    );
-    expect(duplicate.success).toBe(false);
+    await expect(
+      createStaffAction(
+        { success: false },
+        formData({
+          name: "New Hire",
+          email: `newhire-${testTag}@test.local`,
+          username: `newhire-${testTag}`,
+          password: "Test1234!",
+          staffRole: "SHIPMENT_MANAGER",
+        }),
+      ),
+    ).rejects.toThrow(/Forbidden/);
   });
 });

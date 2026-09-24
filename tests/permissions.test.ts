@@ -7,11 +7,11 @@ describe("permission matrix", () => {
     expect(can({ role: "SUPER_ADMIN", staffRole: null }, "staff:manage")).toBe(true);
   });
 
-  it("grants Merchant Owner full merchant-level control", () => {
+  it("grants Merchant Owner full shipment and settings control, but not staff management", () => {
     const owner = { role: "MERCHANT_OWNER" as const, staffRole: null };
     expect(can(owner, "shipment:create")).toBe(true);
     expect(can(owner, "shipment:delete")).toBe(true);
-    expect(can(owner, "staff:manage")).toBe(true);
+    expect(can(owner, "staff:manage")).toBe(false);
     expect(can(owner, "settings:manage")).toBe(true);
   });
 
