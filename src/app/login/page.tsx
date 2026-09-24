@@ -65,7 +65,7 @@ export default function LoginPage() {
               <Link href="/forgot-password" className="hover:underline">
                 Forgot password?
               </Link>
-              <Link href="/track" className="hover:underline">
+              <Link href="/" className="hover:underline">
                 Track a shipment
               </Link>
             </div>

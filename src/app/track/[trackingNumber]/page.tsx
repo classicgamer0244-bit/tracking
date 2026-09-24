@@ -29,7 +29,7 @@ export default async function TrackResultPage({
             We couldn&apos;t find a shipment matching &ldquo;{trackingNumber}&rdquo;. Double-check the
             number and try again.
           </p>
-          <Button render={<Link href="/track" />}>Try another number</Button>
+          <Button render={<Link href="/" />}>Try another number</Button>
         </main>
       </div>
     );
@@ -152,7 +152,7 @@ function InfoStat({
 
 function HeaderAction() {
   return (
-    <Button variant="ghost" render={<Link href="/track" />}>
+    <Button variant="ghost" render={<Link href="/" />}>
       Track another shipment
     </Button>
   );
