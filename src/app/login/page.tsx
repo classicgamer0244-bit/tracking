@@ -42,7 +42,6 @@ export default function LoginPage() {
 
           <div className="rounded-xl border bg-background p-6 shadow-sm sm:p-8">
             <h1 className="font-heading text-2xl font-semibold tracking-tight">Sign in</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Super Admin, merchant, and staff sign-in.</p>
 
             <form action={formAction} className="mt-6 space-y-4">
               <div className="space-y-2">
