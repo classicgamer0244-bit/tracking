@@ -33,23 +33,16 @@ export function MilestoneStepper({ currentStatus }: { currentStatus: ShipmentSta
   ];
 
   return (
-    <div className="flex w-full items-start overflow-x-auto pb-2">
+    <div className="flex flex-col">
       {milestones.map((status, i) => {
         const idx = statusIndex(status);
         const done = currentIdx >= idx;
         const lineAfterDone = i === milestones.length - 1 ? false : currentIdx > idx;
         const isCurrent = status === currentStatus || (i === milestones.length - 1 ? false : idx <= currentIdx && statusIndex(milestones[i + 1]) > currentIdx);
+        const isLast = i === milestones.length - 1;
         return (
-          <div key={status} className="flex min-w-[100px] flex-1 flex-col items-center text-center">
-            <div className="flex w-full items-center">
-              <div className={cn("relative h-0.5 flex-1 overflow-hidden bg-border", i === 0 && "opacity-0")}>
-                <motion.div
-                  className="absolute inset-y-0 left-0 bg-primary"
-                  initial={false}
-                  animate={{ width: done ? "100%" : "0%" }}
-                  transition={reduceMotion ? { duration: 0 } : { duration: 0.5, ease: "easeOut" }}
-                />
-              </div>
+          <div key={status} className="flex gap-4">
+            <div className="flex flex-col items-center">
               <div className="relative">
                 {isCurrent && !reduceMotion && (
                   <motion.span
@@ -68,16 +61,24 @@ export function MilestoneStepper({ currentStatus }: { currentStatus: ShipmentSta
                   {done ? <Check className="h-3.5 w-3.5" /> : <Circle className="h-2 w-2 fill-current" />}
                 </div>
               </div>
-              <div className={cn("relative h-0.5 flex-1 overflow-hidden bg-border", i === milestones.length - 1 && "opacity-0")}>
-                <motion.div
-                  className="absolute inset-y-0 left-0 bg-primary"
-                  initial={false}
-                  animate={{ width: lineAfterDone ? "100%" : "0%" }}
-                  transition={reduceMotion ? { duration: 0 } : { duration: 0.5, ease: "easeOut", delay: 0.15 }}
-                />
-              </div>
+              {!isLast && (
+                <div className="relative w-0.5 flex-1 min-h-8 overflow-hidden bg-border">
+                  <motion.div
+                    className="absolute inset-x-0 top-0 bg-primary"
+                    initial={false}
+                    animate={{ height: lineAfterDone ? "100%" : "0%" }}
+                    transition={reduceMotion ? { duration: 0 } : { duration: 0.5, ease: "easeOut" }}
+                  />
+                </div>
+              )}
             </div>
-            <span className={cn("mt-2 px-1 text-xs", done ? "font-medium text-foreground" : "text-muted-foreground")}>
+            <span
+              className={cn(
+                "pb-8 pt-1 text-sm",
+                isLast && "pb-0",
+                done ? "font-medium text-foreground" : "text-muted-foreground",
+              )}
+            >
               {SHIPMENT_STATUS_LABELS[status]}
             </span>
           </div>

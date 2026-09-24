@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { getPublicShipmentByTrackingNumber } from "@/lib/queries/public-tracking";
 import { resolvePosition } from "@/lib/geo/resolve-position";
 import { MilestoneStepper, EventHistoryList } from "@/components/tracking/timeline";
+import { ShipmentStatusBadge } from "@/components/tracking/status-badge";
 import { ContactMerchantForm } from "@/components/tracking/contact-merchant-form";
 import { ShipmentRouteMap } from "@/components/tracking/shipment-route-map";
 import { PublicHeader } from "@/components/brand/public-header";
@@ -49,9 +50,12 @@ export default async function TrackResultPage({
     <div className="flex min-h-screen flex-col bg-background">
       <PublicHeader action={<HeaderAction />} />
       <main className="mx-auto w-full max-w-4xl flex-1 space-y-6 px-4 py-10">
-        <div>
-          <p className="text-sm text-muted-foreground">Tracking number</p>
-          <h1 className="font-mono text-2xl font-semibold tracking-tight">{shipment.trackingNumber}</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm text-muted-foreground">Tracking number</p>
+            <h1 className="font-mono text-2xl font-semibold tracking-tight">{shipment.trackingNumber}</h1>
+          </div>
+          <ShipmentStatusBadge status={shipment.status} />
         </div>
 
         <Card>

@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LogoMark } from "@/components/brand/logo-mark";
+import { PublicHeader } from "@/components/brand/public-header";
 import { FadeIn } from "@/components/motion/fade-in";
 import { STOCK_IMAGES } from "@/lib/stock-images";
 
@@ -36,8 +36,14 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <PublicHeader
+        action={
+          <Button render={<Link href="/login" />}>Sign in</Button>
+        }
+      />
+
       <main className="flex-1">
-        <section className="relative flex min-h-screen flex-col overflow-hidden">
+        <section className="relative overflow-hidden border-b border-border px-4 py-20 sm:px-8 sm:py-28">
           <Image
             src={STOCK_IMAGES.containerPort}
             alt=""
@@ -46,19 +52,9 @@ export default function Home() {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/60 to-slate-950/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/70 to-slate-950/50" />
 
-          <header className="relative z-10">
-            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-8">
-              <Link href="/" className="flex items-center gap-2 font-heading text-lg font-semibold text-white">
-                <LogoMark />
-                ShipTrack
-              </Link>
-              <Button render={<Link href="/login" />}>Sign in</Button>
-            </div>
-          </header>
-
-          <FadeIn className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-4 sm:px-8">
+          <FadeIn className="relative mx-auto max-w-4xl">
             <h1 className="font-heading text-4xl font-semibold tracking-tight text-white sm:text-5xl">
               Track &amp; Trace
             </h1>
