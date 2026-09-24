@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Package, Menu, LogOut, User as UserIcon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, LogOut, User as UserIcon, Search } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import {
   DropdownMenu,
@@ -17,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
+import { LogoMark } from "@/components/brand/logo-mark";
 import { signOutAction } from "@/actions/sign-out";
 import { cn } from "@/lib/utils";
 
@@ -35,10 +37,10 @@ function NavLinks({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => 
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+              "flex items-center gap-3 rounded-md border-2 border-transparent px-3 py-2 text-sm font-semibold transition-colors",
               active
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ? "border-sidebar-primary bg-sidebar-primary text-sidebar-primary-foreground"
+                : "text-sidebar-foreground/70 hover:border-sidebar-border hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
             )}
           >
             <Icon className="h-4 w-4" />
@@ -50,40 +52,50 @@ function NavLinks({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => 
   );
 }
 
+function SidebarBrand({ brand }: { brand: string }) {
+  return (
+    <div className="flex h-16 items-center gap-2.5 border-b-2 border-sidebar-border px-5 font-heading text-base font-bold text-sidebar-foreground">
+      <LogoMark />
+      {brand}
+    </div>
+  );
+}
+
 export function DashboardShell({
   brand,
   navItems,
   userName,
   userSubtitle,
+  searchBasePath,
   children,
 }: {
   brand: string;
   navItems: NavItem[];
   userName: string;
   userSubtitle: string;
+  searchBasePath?: string;
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const router = useRouter();
 
   return (
-    <div className="flex min-h-screen bg-muted/20">
-      <aside className="hidden w-64 shrink-0 flex-col border-r bg-background md:flex">
-        <div className="flex h-16 items-center gap-2 border-b px-5 font-semibold">
-          <Package className="h-5 w-5 text-primary" />
-          {brand}
-        </div>
+    <div className="flex min-h-screen bg-background">
+      <aside className="hidden w-64 shrink-0 flex-col bg-sidebar md:flex">
+        <SidebarBrand brand={brand} />
         <div className="flex flex-1 flex-col py-4">
           <NavLinks items={navItems} />
+        </div>
+        <div className="border-t-2 border-sidebar-border px-5 py-4 font-mono text-[10px] uppercase tracking-widest text-sidebar-foreground/40">
+          ShipTrack · Cargo Ops
         </div>
       </aside>
 
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-64 p-0">
+        <SheetContent side="left" className="w-64 border-r-0 bg-sidebar p-0 text-sidebar-foreground">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
-          <div className="flex h-16 items-center gap-2 border-b px-5 font-semibold">
-            <Package className="h-5 w-5 text-primary" />
-            {brand}
-          </div>
+          <SidebarBrand brand={brand} />
           <div className="flex flex-col py-4">
             <NavLinks items={navItems} onNavigate={() => setMobileOpen(false)} />
           </div>
@@ -91,20 +103,40 @@ export function DashboardShell({
       </Sheet>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between gap-4 border-b bg-background px-4 md:px-6">
+        <header className="flex h-16 items-center justify-between gap-4 border-b-2 border-ink/90 bg-background px-4 md:px-6">
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
-          <div className="flex-1" />
+          {searchBasePath ? (
+            <form
+              className="hidden max-w-sm flex-1 md:block"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (query.trim()) router.push(`${searchBasePath}?search=${encodeURIComponent(query.trim())}`);
+              }}
+            >
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search tracking number, customer..."
+                  className="border-2 border-ink/40 pl-8"
+                />
+              </div>
+            </form>
+          ) : (
+            <div className="flex-1" />
+          )}
           <div className="flex items-center gap-2">
             <NotificationBell />
             <DropdownMenu>
               <DropdownMenuTrigger render={<Button variant="ghost" className="gap-2 px-2" />}>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-ink bg-primary text-primary-foreground">
                   <UserIcon className="h-4 w-4" />
                 </div>
                 <div className="hidden text-left sm:block">
-                  <p className="text-sm font-medium leading-none">{userName}</p>
+                  <p className="text-sm font-semibold leading-none">{userName}</p>
                   <p className="text-xs text-muted-foreground">{userSubtitle}</p>
                 </div>
               </DropdownMenuTrigger>
@@ -112,7 +144,13 @@ export function DashboardShell({
                 <DropdownMenuGroup>
                   <DropdownMenuLabel>{userName}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOutAction()}>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      signOutAction().then(() => {
+                        window.location.href = "/login";
+                      });
+                    }}
+                  >
                     <LogOut className="h-4 w-4" /> Sign out
                   </DropdownMenuItem>
                 </DropdownMenuGroup>

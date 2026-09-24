@@ -29,7 +29,13 @@ export function SuperAdminShell({
   children: React.ReactNode;
 }) {
   return (
-    <DashboardShell brand="ShipTrack Admin" navItems={navItems} userName={userName} userSubtitle="Super Admin">
+    <DashboardShell
+      brand="ShipTrack Admin"
+      navItems={navItems}
+      userName={userName}
+      userSubtitle="Super Admin"
+      searchBasePath="/super-admin/shipments"
+    >
       {children}
     </DashboardShell>
   );

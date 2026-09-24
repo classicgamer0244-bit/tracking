@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuthShell } from "@/components/brand/auth-shell";
 
 function ResetPasswordForm() {
   const params = useSearchParams();
@@ -17,7 +18,7 @@ function ResetPasswordForm() {
 
   if (state.success) {
     return (
-      <Card>
+      <Card className="border-2 border-ink shadow-cargo">
         <CardHeader>
           <CardTitle>Password updated</CardTitle>
           <CardDescription>You can now sign in with your new password.</CardDescription>
@@ -32,7 +33,7 @@ function ResetPasswordForm() {
   }
 
   return (
-    <Card>
+    <Card className="border-2 border-ink shadow-cargo">
       <CardHeader>
         <CardTitle>Set a new password</CardTitle>
         <CardDescription>Choose a strong password for your account.</CardDescription>
@@ -61,12 +62,10 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
-      <div className="w-full max-w-sm">
-        <Suspense>
-          <ResetPasswordForm />
-        </Suspense>
-      </div>
-    </div>
+    <AuthShell>
+      <Suspense>
+        <ResetPasswordForm />
+      </Suspense>
+    </AuthShell>
   );
 }

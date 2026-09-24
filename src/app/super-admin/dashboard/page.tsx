@@ -3,6 +3,7 @@ import { Building2, Package, Truck, CheckCircle2, AlertTriangle, MessageSquare, 
 import { getSuperAdminDashboard } from "@/lib/queries/dashboard";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { TrendChart } from "@/components/dashboard/trend-chart";
+import { LiveShipmentsMap } from "@/components/dashboard/live-shipments-map";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,20 +15,24 @@ export default async function SuperAdminDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Platform overview</h1>
+        <h1 className="font-heading text-2xl font-bold tracking-tight">Platform overview</h1>
         <p className="text-muted-foreground">Everything happening across ShipTrack.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total merchants" value={stats.totalMerchants} icon={Building2} tone="neutral" />
+        <StatCard label="Total merchants" value={stats.totalMerchants} icon={Building2} tone="neutral" trend={stats.merchantsTrend} />
         <StatCard label="Active merchants" value={stats.activeMerchants} icon={Building2} tone="success" />
-        <StatCard label="Total shipments" value={stats.totalShipments} icon={Package} tone="neutral" />
+        <StatCard label="Total shipments" value={stats.totalShipments} icon={Package} tone="neutral" trend={stats.shipmentsTrend} />
         <StatCard label="Shipments today" value={stats.shipmentsToday} icon={CalendarDays} tone="info" />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="In transit" value={stats.inTransit} icon={Truck} tone="info" />
         <StatCard label="Delivered" value={stats.delivered} icon={CheckCircle2} tone="success" />
         <StatCard label="Delayed" value={stats.delayed} icon={AlertTriangle} tone="warning" />
         <StatCard label="Total messages" value={stats.totalMessages} icon={MessageSquare} tone="info" />
       </div>
+
+      <LiveShipmentsMap basePath="/super-admin/shipments" />
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">

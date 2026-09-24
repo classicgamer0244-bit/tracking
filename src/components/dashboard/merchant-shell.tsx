@@ -43,7 +43,13 @@ export function MerchantShell({
   navItems.push({ href: "/merchant/settings", label: "Settings", icon: Settings });
 
   return (
-    <DashboardShell brand="ShipTrack" navItems={navItems} userName={userName} userSubtitle={userSubtitle}>
+    <DashboardShell
+      brand="ShipTrack"
+      navItems={navItems}
+      userName={userName}
+      userSubtitle={userSubtitle}
+      searchBasePath="/merchant/shipments"
+    >
       {children}
     </DashboardShell>
   );

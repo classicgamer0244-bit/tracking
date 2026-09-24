@@ -13,6 +13,7 @@ import { requireMerchantUser } from "@/lib/session";
 import { getMerchantDashboard } from "@/lib/queries/dashboard";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { TrendChart } from "@/components/dashboard/trend-chart";
+import { LiveShipmentsMap } from "@/components/dashboard/live-shipments-map";
 import { ShipmentStatusBadge } from "@/components/tracking/status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -25,20 +26,24 @@ export default async function MerchantDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <h1 className="font-heading text-2xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">Welcome back, {user.name}.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total shipments" value={stats.total} icon={Package} tone="neutral" />
-        <StatCard label="Active" value={stats.active} icon={Activity} tone="info" />
+        <StatCard label="Total shipments" value={stats.total} icon={Package} tone="neutral" trend={stats.shipmentsTrend} />
         <StatCard label="In transit" value={stats.inTransit} icon={Truck} tone="info" />
-        <StatCard label="Out for delivery" value={stats.outForDelivery} icon={Clock} tone="warning" />
-        <StatCard label="Delivered" value={stats.delivered} icon={CheckCircle2} tone="success" />
-        <StatCard label="Delayed" value={stats.delayed} icon={AlertTriangle} tone="warning" />
-        <StatCard label="Cancelled / returned" value={stats.cancelled} icon={XCircle} tone="danger" />
+        <StatCard label="Delivered" value={stats.delivered} icon={CheckCircle2} tone="success" trend={stats.deliveredTrend} />
         <StatCard label="Unread messages" value={stats.unreadMessages} icon={MessageSquare} tone="info" />
       </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Active" value={stats.active} icon={Activity} tone="info" />
+        <StatCard label="Out for delivery" value={stats.outForDelivery} icon={Clock} tone="warning" />
+        <StatCard label="Delayed" value={stats.delayed} icon={AlertTriangle} tone="warning" />
+        <StatCard label="Cancelled / returned" value={stats.cancelled} icon={XCircle} tone="danger" />
+      </div>
+
+      <LiveShipmentsMap basePath="/merchant/shipments" />
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">

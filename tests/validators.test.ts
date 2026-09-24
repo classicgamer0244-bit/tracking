@@ -60,7 +60,7 @@ describe("shipmentFormSchema", () => {
   });
 
   it("rejects a shipment missing required recipient fields", () => {
-    const { recipientName, ...rest } = valid;
+    const { recipientName: _recipientName, ...rest } = valid;
     const result = shipmentFormSchema.safeParse(rest);
     expect(result.success).toBe(false);
   });

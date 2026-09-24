@@ -24,6 +24,10 @@ export async function getMerchantDashboard(merchantId: string) {
     unreadMessages,
     recentShipments,
     last14Days,
+    thisWeek,
+    lastWeek,
+    deliveredThisWeek,
+    deliveredLastWeek,
   ] = await Promise.all([
     prisma.shipment.count({ where: base }),
     prisma.shipment.count({ where: { ...base, status: "DELIVERED" } }),
@@ -43,10 +47,17 @@ export async function getMerchantDashboard(merchantId: string) {
       where: { merchantId, createdAt: { gte: startOfDay(subDays(new Date(), 13)) } },
       select: { createdAt: true, status: true },
     }),
+    prisma.shipment.count({ where: { ...base, createdAt: { gte: startOfDay(subDays(new Date(), 6)) } } }),
+    prisma.shipment.count({
+      where: { ...base, createdAt: { gte: startOfDay(subDays(new Date(), 13)), lt: startOfDay(subDays(new Date(), 6)) } },
+    }),
+    prisma.shipment.count({ where: { ...base, status: "DELIVERED", updatedAt: { gte: startOfDay(subDays(new Date(), 6)) } } }),
+    prisma.shipment.count({
+      where: { ...base, status: "DELIVERED", updatedAt: { gte: startOfDay(subDays(new Date(), 13)), lt: startOfDay(subDays(new Date(), 6)) } },
+    }),
   ]);
 
   const active = total - delivered - cancelled;
-
   const trend = buildDailyTrend(last14Days.map((s) => s.createdAt));
 
   return {
@@ -60,6 +71,8 @@ export async function getMerchantDashboard(merchantId: string) {
     unreadMessages,
     recentShipments,
     trend,
+    shipmentsTrend: weekOverWeek(thisWeek, lastWeek),
+    deliveredTrend: weekOverWeek(deliveredThisWeek, deliveredLastWeek),
   };
 }
 
@@ -75,6 +88,10 @@ export async function getSuperAdminDashboard() {
     totalMessages,
     recentMerchants,
     last14Days,
+    thisWeek,
+    lastWeek,
+    merchantsThisWeek,
+    merchantsLastWeek,
   ] = await Promise.all([
     prisma.merchant.count(),
     prisma.merchant.count({ where: { status: "ACTIVE" } }),
@@ -88,6 +105,14 @@ export async function getSuperAdminDashboard() {
     prisma.shipment.findMany({
       where: { createdAt: { gte: startOfDay(subDays(new Date(), 13)) } },
       select: { createdAt: true },
+    }),
+    prisma.shipment.count({ where: { createdAt: { gte: startOfDay(subDays(new Date(), 6)) } } }),
+    prisma.shipment.count({
+      where: { createdAt: { gte: startOfDay(subDays(new Date(), 13)), lt: startOfDay(subDays(new Date(), 6)) } },
+    }),
+    prisma.merchant.count({ where: { createdAt: { gte: startOfDay(subDays(new Date(), 6)) } } }),
+    prisma.merchant.count({
+      where: { createdAt: { gte: startOfDay(subDays(new Date(), 13)), lt: startOfDay(subDays(new Date(), 6)) } },
     }),
   ]);
 
@@ -104,6 +129,8 @@ export async function getSuperAdminDashboard() {
     totalMessages,
     recentMerchants,
     trend,
+    shipmentsTrend: weekOverWeek(thisWeek, lastWeek),
+    merchantsTrend: weekOverWeek(merchantsThisWeek, merchantsLastWeek),
   };
 }
 
@@ -116,4 +143,17 @@ function buildDailyTrend(dates: Date[]) {
     days.push({ date: label, count });
   }
   return days;
+}
+
+function weekOverWeek(current: number, previous: number): { value: string; direction: "up" | "down" | "flat" } {
+  if (previous === 0) {
+    if (current === 0) return { value: "0%", direction: "flat" };
+    return { value: "New", direction: "up" };
+  }
+  const change = ((current - previous) / previous) * 100;
+  if (Math.abs(change) < 1) return { value: "0%", direction: "flat" };
+  return {
+    value: `${change > 0 ? "+" : ""}${change.toFixed(1)}%`,
+    direction: change > 0 ? "up" : "down",
+  };
 }
