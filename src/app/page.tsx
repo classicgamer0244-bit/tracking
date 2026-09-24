@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PublicHeader } from "@/components/brand/public-header";
 import { FadeIn } from "@/components/motion/fade-in";
+import { STOCK_IMAGES } from "@/lib/stock-images";
 
 const FAQS = [
   {
@@ -41,10 +43,22 @@ export default function Home() {
       />
 
       <main className="flex-1">
-        <section className="border-b border-border px-4 py-12 sm:px-8 sm:py-16">
-          <FadeIn className="mx-auto max-w-4xl">
-            <h1 className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl">Track &amp; Trace</h1>
-            <p className="mt-3 max-w-xl text-muted-foreground">
+        <section className="relative overflow-hidden border-b border-border px-4 py-20 sm:px-8 sm:py-28">
+          <Image
+            src={STOCK_IMAGES.containerPort}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/70 to-slate-950/50" />
+
+          <FadeIn className="relative mx-auto max-w-4xl">
+            <h1 className="font-heading text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+              Track &amp; Trace
+            </h1>
+            <p className="mt-3 max-w-xl text-white/80">
               Enter a tracking number to see live status, location, and delivery estimates — no
               account needed.
             </p>
@@ -54,7 +68,7 @@ export default function Home() {
                 e.preventDefault();
                 if (value.trim()) router.push(`/track/${encodeURIComponent(value.trim().toUpperCase())}`);
               }}
-              className="mt-8 flex flex-col gap-3 rounded-xl bg-secondary/60 p-3 sm:flex-row sm:p-4"
+              className="mt-8 flex flex-col gap-3 rounded-xl bg-card/95 p-3 shadow-lg backdrop-blur-sm sm:flex-row sm:p-4"
             >
               <Input
                 value={value}
@@ -68,7 +82,7 @@ export default function Home() {
                 Track
               </Button>
             </form>
-            <p className="mt-2 text-xs text-muted-foreground">e.g. STK-7F3K9QP2A1</p>
+            <p className="mt-2 text-xs text-white/70">e.g. STK-7F3K9QP2A1</p>
           </FadeIn>
         </section>
 
