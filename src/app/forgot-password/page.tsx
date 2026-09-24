@@ -14,7 +14,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthShell>
-      <Card className="border-2 border-ink shadow-cargo">
+      <Card className="shadow-md">
         <CardHeader>
           <CardTitle>Reset your password</CardTitle>
           <CardDescription>We&apos;ll generate a reset link for your account.</CardDescription>

@@ -17,26 +17,26 @@ export function StatCard({
   trend?: { value: string; direction: "up" | "down" | "flat" };
 }) {
   const toneClasses: Record<string, string> = {
-    neutral: "bg-ink text-background",
-    success: "bg-emerald-600 text-white",
-    warning: "bg-amber-500 text-white",
-    danger: "bg-red-600 text-white",
-    info: "bg-primary text-primary-foreground",
+    neutral: "bg-muted text-foreground",
+    success: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300",
+    warning: "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-300",
+    danger: "bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-300",
+    info: "bg-primary/10 text-primary",
   };
 
   return (
-    <Card className="transition-transform hover:-translate-y-0.5">
+    <Card className="shadow-none transition-shadow hover:shadow-sm">
       <CardContent className="flex items-start gap-3 py-5">
-        <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border-2 border-ink", toneClasses[tone])}>
+        <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-lg", toneClasses[tone])}>
           <Icon className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-            <p className="font-heading text-2xl font-bold leading-none">{value}</p>
+            <p className="font-heading text-2xl font-semibold leading-none">{value}</p>
             {trend && (
               <span
                 className={cn(
-                  "flex items-center gap-0.5 text-xs font-bold",
+                  "flex items-center gap-0.5 text-xs font-medium",
                   trend.direction === "up" && "text-emerald-600",
                   trend.direction === "down" && "text-red-600",
                   trend.direction === "flat" && "text-muted-foreground",

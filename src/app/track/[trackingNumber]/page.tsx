@@ -24,7 +24,7 @@ export default async function TrackResultPage({
         <PublicHeader action={<HeaderAction />} />
         <main className="flex flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
           <Package className="h-12 w-12 text-muted-foreground" />
-          <h1 className="font-heading text-2xl font-bold">Tracking number not found</h1>
+          <h1 className="font-heading text-2xl font-semibold">Tracking number not found</h1>
           <p className="max-w-md text-muted-foreground">
             We couldn&apos;t find a shipment matching &ldquo;{trackingNumber}&rdquo;. Double-check the
             number and try again.
@@ -53,7 +53,7 @@ export default async function TrackResultPage({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm text-muted-foreground">Tracking number</p>
-            <h1 className="font-mono text-2xl font-bold tracking-tight">{shipment.trackingNumber}</h1>
+            <h1 className="font-mono text-2xl font-semibold tracking-tight">{shipment.trackingNumber}</h1>
           </div>
           <ShipmentStatusBadge status={shipment.status} />
         </div>

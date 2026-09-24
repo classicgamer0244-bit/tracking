@@ -15,7 +15,7 @@ export default async function SuperAdminDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-heading text-2xl font-bold tracking-tight">Platform overview</h1>
+        <h1 className="font-heading text-2xl font-semibold tracking-tight">Platform overview</h1>
         <p className="text-muted-foreground">Everything happening across ShipTrack.</p>
       </div>
 

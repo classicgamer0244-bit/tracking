@@ -31,11 +31,11 @@ export function HierarchyChain() {
         const Icon = step.icon;
         return (
           <div key={step.title} className="contents">
-            <div className="flex flex-col items-center gap-3 rounded-xl border-2 border-ink bg-card p-5 text-center shadow-cargo-sm">
-              <div className="flex h-11 w-11 items-center justify-center rounded-lg border-2 border-ink bg-primary text-primary-foreground">
+            <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-5 text-center shadow-sm">
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Icon className="h-5 w-5" />
               </div>
-              <p className="font-heading text-sm font-bold">{step.title}</p>
+              <p className="font-heading text-sm font-semibold">{step.title}</p>
               <p className="text-xs text-muted-foreground">{step.body}</p>
             </div>
             {i < steps.length - 1 && (

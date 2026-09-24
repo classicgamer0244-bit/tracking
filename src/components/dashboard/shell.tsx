@@ -37,10 +37,10 @@ function NavLinks({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => 
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "flex items-center gap-3 rounded-md border-2 border-transparent px-3 py-2 text-sm font-semibold transition-colors",
+              "flex items-center gap-3 rounded-md border-l-2 border-transparent px-3 py-2 text-sm font-medium transition-colors",
               active
-                ? "border-sidebar-primary bg-sidebar-primary text-sidebar-primary-foreground"
-                : "text-sidebar-foreground/70 hover:border-sidebar-border hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                ? "border-sidebar-primary bg-sidebar-accent text-sidebar-accent-foreground"
+                : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
             )}
           >
             <Icon className="h-4 w-4" />
@@ -54,7 +54,7 @@ function NavLinks({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => 
 
 function SidebarBrand({ brand }: { brand: string }) {
   return (
-    <div className="flex h-16 items-center gap-2.5 border-b-2 border-sidebar-border px-5 font-heading text-base font-bold text-sidebar-foreground">
+    <div className="flex h-16 items-center gap-2.5 border-b border-sidebar-border px-5 font-heading text-base font-semibold text-sidebar-foreground">
       <LogoMark />
       {brand}
     </div>
@@ -87,9 +87,6 @@ export function DashboardShell({
         <div className="flex flex-1 flex-col py-4">
           <NavLinks items={navItems} />
         </div>
-        <div className="border-t-2 border-sidebar-border px-5 py-4 font-mono text-[10px] uppercase tracking-widest text-sidebar-foreground/40">
-          ShipTrack · Cargo Ops
-        </div>
       </aside>
 
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -103,7 +100,7 @@ export function DashboardShell({
       </Sheet>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between gap-4 border-b-2 border-ink/90 bg-background px-4 md:px-6">
+        <header className="flex h-16 items-center justify-between gap-4 border-b border-border bg-background px-4 md:px-6">
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
@@ -121,7 +118,7 @@ export function DashboardShell({
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search tracking number, customer..."
-                  className="border-2 border-ink/40 pl-8"
+                  className="pl-8"
                 />
               </div>
             </form>
@@ -132,7 +129,7 @@ export function DashboardShell({
             <NotificationBell />
             <DropdownMenu>
               <DropdownMenuTrigger render={<Button variant="ghost" className="gap-2 px-2" />}>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-ink bg-primary text-primary-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <UserIcon className="h-4 w-4" />
                 </div>
                 <div className="hidden text-left sm:block">

@@ -8,11 +8,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "border-ink bg-primary text-primary-foreground shadow-cargo-sm press-cargo hover:-translate-y-0.5 hover:shadow-cargo",
+          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:not-aria-[haspopup]:translate-y-px",
         outline:
-          "border-ink bg-background hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent aria-expanded:text-accent-foreground shadow-cargo-sm press-cargo hover:-translate-y-0.5 hover:shadow-cargo",
+          "border-border bg-background shadow-sm hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent aria-expanded:text-accent-foreground active:not-aria-[haspopup]:translate-y-px",
         secondary:
-          "border-ink/70 bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_8%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground active:not-aria-[haspopup]:translate-y-px",
+          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_8%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground active:not-aria-[haspopup]:translate-y-px",
         ghost:
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 active:not-aria-[haspopup]:translate-y-px",
         destructive:

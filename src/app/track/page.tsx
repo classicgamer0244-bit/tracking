@@ -44,7 +44,7 @@ export default function TrackSearchPage() {
       <main className="flex-1">
         <section className="border-b border-border px-4 py-12 sm:px-8 sm:py-16">
           <div className="mx-auto max-w-4xl">
-            <h1 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl">Track &amp; Trace</h1>
+            <h1 className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl">Track &amp; Trace</h1>
             <p className="mt-3 max-w-xl text-muted-foreground">
               Enter a tracking number to see live status, location, and delivery estimates — no
               account needed.
@@ -61,7 +61,7 @@ export default function TrackSearchPage() {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 placeholder="Enter your tracking number"
-                className="h-12 flex-1 border-2 border-ink bg-card font-mono text-base uppercase"
+                className="h-12 flex-1 bg-card font-mono text-base uppercase shadow-sm"
                 autoFocus
               />
               <Button type="submit" size="lg" className="h-12 sm:px-8">
@@ -75,7 +75,7 @@ export default function TrackSearchPage() {
 
         <section className="px-4 py-14 sm:px-8">
           <div className="mx-auto max-w-4xl">
-            <h2 className="font-heading text-2xl font-bold tracking-tight">Frequently asked questions</h2>
+            <h2 className="font-heading text-2xl font-semibold tracking-tight">Frequently asked questions</h2>
             <div className="mt-6 divide-y divide-border border-t border-border">
               {FAQS.map((item) => (
                 <details key={item.q} className="group py-4">

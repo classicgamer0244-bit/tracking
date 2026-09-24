@@ -18,7 +18,7 @@ function ResetPasswordForm() {
 
   if (state.success) {
     return (
-      <Card className="border-2 border-ink shadow-cargo">
+      <Card className="shadow-md">
         <CardHeader>
           <CardTitle>Password updated</CardTitle>
           <CardDescription>You can now sign in with your new password.</CardDescription>
@@ -33,7 +33,7 @@ function ResetPasswordForm() {
   }
 
   return (
-    <Card className="border-2 border-ink shadow-cargo">
+    <Card className="shadow-md">
       <CardHeader>
         <CardTitle>Set a new password</CardTitle>
         <CardDescription>Choose a strong password for your account.</CardDescription>

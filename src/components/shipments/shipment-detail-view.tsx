@@ -40,7 +40,7 @@ export async function ShipmentDetailView({
         <div>
           <p className="text-sm text-muted-foreground">Tracking number</p>
           <div className="flex items-center gap-1">
-            <h1 className="font-mono text-2xl font-bold tracking-tight">{shipment.trackingNumber}</h1>
+            <h1 className="font-mono text-2xl font-semibold tracking-tight">{shipment.trackingNumber}</h1>
             <CopyButton value={shipment.trackingNumber} label="Copy tracking number" />
           </div>
           {isSuperAdmin && (

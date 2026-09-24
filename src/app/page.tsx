@@ -9,9 +9,9 @@ import { HierarchyChain } from "@/components/brand/hierarchy-chain";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <header className="border-b-2 border-ink/90 bg-background">
+      <header className="border-b border-border bg-background">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2.5 font-heading text-lg font-bold">
+          <div className="flex items-center gap-2.5 font-heading text-lg font-semibold">
             <LogoMark />
             ShipTrack
           </div>
@@ -26,24 +26,16 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="relative overflow-hidden px-6 pb-20 pt-20 sm:pb-28 sm:pt-28">
-          <div
-            className="pointer-events-none absolute inset-0 -z-10 opacity-[0.35]"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, var(--foreground) 1px, transparent 1px)",
-              backgroundSize: "22px 22px",
-              maskImage: "radial-gradient(ellipse 60% 50% at 50% 30%, black, transparent)",
-            }}
-          />
+        <section className="px-6 pb-20 pt-20 sm:pb-28 sm:pt-28">
           <div className="mx-auto max-w-4xl text-center">
-            <span className="inline-block -rotate-2 rounded-md border-2 border-ink bg-primary px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-primary-foreground shadow-cargo-sm">
-              Multi-tenant · Real shipments · Real merchants
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              Multi-tenant shipment tracking
             </span>
-            <h1 className="mt-6 font-heading text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
-              Shipment tracking,
+            <h1 className="mt-6 font-heading text-5xl font-semibold leading-[1.1] tracking-tight sm:text-6xl">
+              Shipment tracking your
               <br />
-              built like a <span className="text-primary">shipping label.</span>
+              merchants will <span className="text-primary">actually trust.</span>
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
               Every merchant gets their own isolated dashboard to create shipments, log tracking
@@ -59,8 +51,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mx-auto mt-16 max-w-4xl rounded-2xl border-2 border-ink bg-card p-8 shadow-cargo">
-            <p className="mb-6 text-center font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          <div className="mx-auto mt-16 max-w-4xl rounded-2xl border border-border bg-card p-8 shadow-sm">
+            <p className="mb-6 text-center font-mono text-xs text-muted-foreground">
               Tracking №&nbsp; STK-7F3K9QP2A1
             </p>
             <RouteStrip />
@@ -68,8 +60,8 @@ export default function Home() {
         </section>
 
         {/* Stats strip */}
-        <section className="border-y-2 border-ink/90 bg-ink text-background">
-          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 py-8 sm:grid-cols-4">
+        <section className="border-y border-border bg-secondary/50">
+          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 py-10 sm:grid-cols-4">
             {[
               ["3", "user roles"],
               ["17", "tracking statuses"],
@@ -77,8 +69,8 @@ export default function Home() {
               ["24/7", "public tracking"],
             ].map(([value, label]) => (
               <div key={label} className="text-center">
-                <p className="font-heading text-3xl font-bold text-primary">{value}</p>
-                <p className="mt-1 text-xs uppercase tracking-wide text-background/70">{label}</p>
+                <p className="font-heading text-3xl font-semibold text-primary">{value}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{label}</p>
               </div>
             ))}
           </div>
@@ -86,7 +78,7 @@ export default function Home() {
 
         {/* Features */}
         <section className="mx-auto max-w-6xl px-6 py-24">
-          <h2 className="text-center font-heading text-3xl font-bold tracking-tight">
+          <h2 className="text-center font-heading text-3xl font-semibold tracking-tight">
             Everything a logistics team actually needs
           </h2>
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
@@ -124,9 +116,9 @@ export default function Home() {
         </section>
 
         {/* How it works */}
-        <section className="border-t-2 border-ink/90 bg-secondary/40 px-6 py-24">
+        <section className="border-t border-border bg-secondary/30 px-6 py-24">
           <div className="mx-auto max-w-5xl">
-            <h2 className="text-center font-heading text-3xl font-bold tracking-tight">
+            <h2 className="text-center font-heading text-3xl font-semibold tracking-tight">
               How the pieces fit together
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground">
@@ -140,9 +132,9 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t-2 border-ink/90 bg-ink text-background">
+      <footer className="border-t border-border bg-ink text-background">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
-          <div className="flex items-center gap-2.5 font-heading text-base font-bold">
+          <div className="flex items-center gap-2.5 font-heading text-base font-semibold">
             <LogoMark mono />
             ShipTrack
           </div>
@@ -168,9 +160,9 @@ function FeatureCard({
   body: string;
 }) {
   return (
-    <Card className="border-2 border-ink shadow-cargo-sm transition-transform hover:-translate-y-1 hover:shadow-cargo">
+    <Card className="shadow-none transition-shadow hover:shadow-md">
       <CardHeader>
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-ink bg-primary text-primary-foreground">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <Icon className="h-5 w-5" />
         </div>
         <CardTitle className="mt-3">{title}</CardTitle>

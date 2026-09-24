@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   return (
     <AuthShell>
-      <Card className="border-2 border-ink shadow-cargo">
+      <Card className="shadow-md">
         <CardHeader>
           <CardTitle>Sign in</CardTitle>
           <CardDescription>Super Admin, merchant, and staff sign-in.</CardDescription>
