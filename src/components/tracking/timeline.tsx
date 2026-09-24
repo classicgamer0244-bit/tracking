@@ -1,0 +1,100 @@
+import { Check, Circle, AlertTriangle } from "lucide-react";
+import type { ShipmentStatus } from "@prisma/client";
+import { SHIPMENT_STATUS_LABELS, isException, statusIndex } from "@/lib/shipment-status";
+import { cn } from "@/lib/utils";
+
+export function MilestoneStepper({ currentStatus }: { currentStatus: ShipmentStatus }) {
+  if (isException(currentStatus)) {
+    return (
+      <div className="flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+        <AlertTriangle className="h-5 w-5 shrink-0" />
+        <p className="text-sm font-medium">
+          This shipment is currently marked <strong>{SHIPMENT_STATUS_LABELS[currentStatus]}</strong>.
+        </p>
+      </div>
+    );
+  }
+
+  const currentIdx = statusIndex(currentStatus);
+  // A condensed set of milestones for a clean horizontal stepper.
+  const milestones: ShipmentStatus[] = [
+    "SHIPMENT_CREATED",
+    "PICKED_UP",
+    "DEPARTED_FACILITY",
+    "IN_TRANSIT",
+    "CUSTOMS_CLEARED",
+    "OUT_FOR_DELIVERY",
+    "DELIVERED",
+  ];
+
+  return (
+    <div className="flex w-full items-start overflow-x-auto pb-2">
+      {milestones.map((status, i) => {
+        const idx = statusIndex(status);
+        const done = currentIdx >= idx;
+        const isCurrent = status === currentStatus || (i === milestones.length - 1 ? false : idx <= currentIdx && statusIndex(milestones[i + 1]) > currentIdx);
+        return (
+          <div key={status} className="flex min-w-[100px] flex-1 flex-col items-center text-center">
+            <div className="flex w-full items-center">
+              <div className={cn("h-0.5 flex-1", i === 0 ? "opacity-0" : done ? "bg-primary" : "bg-border")} />
+              <div
+                className={cn(
+                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-xs",
+                  done ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-muted-foreground",
+                  isCurrent && "ring-4 ring-primary/20",
+                )}
+              >
+                {done ? <Check className="h-3.5 w-3.5" /> : <Circle className="h-2 w-2 fill-current" />}
+              </div>
+              <div className={cn("h-0.5 flex-1", i === milestones.length - 1 ? "opacity-0" : currentIdx > idx ? "bg-primary" : "bg-border")} />
+            </div>
+            <span className={cn("mt-2 px-1 text-xs", done ? "font-medium text-foreground" : "text-muted-foreground")}>
+              {SHIPMENT_STATUS_LABELS[status]}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export type TimelineEvent = {
+  id: string;
+  status: ShipmentStatus;
+  location: string;
+  occurredAt: Date | string;
+  description: string;
+};
+
+export function EventHistoryList({ events }: { events: TimelineEvent[] }) {
+  if (events.length === 0) {
+    return <p className="text-sm text-muted-foreground">No tracking events yet.</p>;
+  }
+
+  return (
+    <ol className="relative space-y-6 border-l pl-6">
+      {events.map((event, i) => {
+        const date = new Date(event.occurredAt);
+        return (
+          <li key={event.id} className="relative">
+            <span
+              className={cn(
+                "absolute -left-[29px] top-1 h-3 w-3 rounded-full border-2 border-background",
+                i === 0 ? "bg-primary" : "bg-muted-foreground/40",
+              )}
+            />
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <p className="font-medium">{SHIPMENT_STATUS_LABELS[event.status]}</p>
+              <time className="text-xs text-muted-foreground">
+                {date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })} ·{" "}
+                {date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+              </time>
+            </div>
+            <p className="text-sm text-muted-foreground">{event.location}</p>
+            <p className="mt-1 text-sm">{event.description}</p>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
