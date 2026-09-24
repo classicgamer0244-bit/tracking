@@ -82,7 +82,7 @@ export function DashboardShell({
 
   return (
     <div className="flex min-h-screen bg-background">
-      <aside className="hidden w-64 shrink-0 flex-col bg-sidebar md:flex">
+      <aside className="hidden w-64 shrink-0 flex-col bg-sidebar md:flex print:hidden">
         <SidebarBrand brand={brand} />
         <div className="flex flex-1 flex-col py-4">
           <NavLinks items={navItems} />
@@ -100,7 +100,7 @@ export function DashboardShell({
       </Sheet>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between gap-4 border-b border-border bg-background px-4 md:px-6">
+        <header className="flex h-16 items-center justify-between gap-4 border-b border-border bg-background px-4 md:px-6 print:hidden">
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
@@ -155,7 +155,7 @@ export function DashboardShell({
             </DropdownMenu>
           </div>
         </header>
-        <main className="flex-1 overflow-x-hidden p-4 md:p-6">{children}</main>
+        <main className="flex-1 overflow-x-hidden p-4 md:p-6 print:p-0">{children}</main>
       </div>
     </div>
   );

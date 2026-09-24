@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Printer } from "lucide-react";
 import { getShipmentDetail } from "@/lib/queries/shipments";
 import { ShipmentStatusBadge } from "@/components/tracking/status-badge";
 import { CopyButton } from "@/components/shipments/copy-button";
@@ -59,6 +59,12 @@ export async function ShipmentDetailView({
             className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
           >
             Public page <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
+          <Link
+            href={`${basePath}/${shipment.id}/invoice`}
+            className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+          >
+            <Printer className="h-3.5 w-3.5" /> Invoice
           </Link>
           {canUpdateStatus && (
             <StatusUpdateControl
