@@ -140,7 +140,7 @@ export default function Home() {
             ShipTrack
           </Link>
           <p className="text-sm text-ink-foreground/70">
-            &copy; {new Date().getFullYear()} ShipTrack. Real-time shipment tracking, worldwide.
+            &copy; 2021 ShipTrack. Real-time shipment tracking, worldwide.
           </p>
           <div className="flex items-center gap-5 text-sm">
             <Link href="/" className="text-ink-foreground/70 hover:text-ink-foreground">
