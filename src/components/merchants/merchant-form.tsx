@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -19,12 +19,11 @@ import type { ActionResult } from "@/actions/shipments";
 const initialState: ActionResult = { success: false };
 
 export type MerchantFormValues = {
-  id?: string;
+  id: string;
   businessName?: string;
   merchantName?: string;
   email?: string;
   phone?: string;
-  username?: string;
   businessAddress?: string;
   country?: string;
   city?: string;
@@ -32,76 +31,64 @@ export type MerchantFormValues = {
   logoUrl?: string;
 };
 
+/** Edit-only — merchant creation is just email + password (see CreateMerchantForm). */
 export function MerchantForm({
-  mode,
   action,
   defaultValues,
 }: {
-  mode: "create" | "edit";
   action: (state: ActionResult, formData: FormData) => Promise<ActionResult>;
-  defaultValues?: MerchantFormValues;
+  defaultValues: MerchantFormValues;
 }) {
   const router = useRouter();
   const [state, formAction, pending] = useActionState(action, initialState);
-  const dv = defaultValues ?? {};
+  const dv = defaultValues;
 
   useEffect(() => {
     if (state.success) {
-      toast.success(mode === "create" ? "Merchant created" : "Merchant updated");
-      if (mode === "create" && state.id) router.push(`/super-admin/merchants/${state.id}`);
+      toast.success("Merchant updated");
     } else if (state.error) {
       toast.error(state.error);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (
     <form action={formAction} className="space-y-6">
-      {mode === "edit" && <input type="hidden" name="id" value={dv.id} />}
+      <input type="hidden" name="id" value={dv.id} />
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Business details</CardTitle>
+          <CardDescription>
+            Optional — the merchant can fill these in themselves from Settings.
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div>
-            <Label className="mb-2 block">Business name *</Label>
-            <Input name="businessName" defaultValue={dv.businessName} required />
+            <Label className="mb-2 block">Business name</Label>
+            <Input name="businessName" defaultValue={dv.businessName} />
           </div>
           <div>
-            <Label className="mb-2 block">Merchant contact name *</Label>
-            <Input name="merchantName" defaultValue={dv.merchantName} required />
+            <Label className="mb-2 block">Merchant contact name</Label>
+            <Input name="merchantName" defaultValue={dv.merchantName} />
           </div>
           <div>
             <Label className="mb-2 block">Email *</Label>
             <Input name="email" type="email" defaultValue={dv.email} required />
           </div>
           <div>
-            <Label className="mb-2 block">Phone *</Label>
-            <Input name="phone" defaultValue={dv.phone} required />
+            <Label className="mb-2 block">Phone</Label>
+            <Input name="phone" defaultValue={dv.phone} />
           </div>
-          {mode === "create" && (
-            <>
-              <div>
-                <Label className="mb-2 block">Username *</Label>
-                <Input name="username" defaultValue={dv.username} required />
-              </div>
-              <div>
-                <Label className="mb-2 block">Password *</Label>
-                <Input name="password" type="password" required minLength={8} />
-              </div>
-            </>
-          )}
           <div className="sm:col-span-2">
-            <Label className="mb-2 block">Business address *</Label>
-            <Input name="businessAddress" defaultValue={dv.businessAddress} required />
+            <Label className="mb-2 block">Business address</Label>
+            <Input name="businessAddress" defaultValue={dv.businessAddress} />
           </div>
           <div>
-            <Label className="mb-2 block">Country *</Label>
-            <Input name="country" defaultValue={dv.country} required />
+            <Label className="mb-2 block">Country</Label>
+            <Input name="country" defaultValue={dv.country} />
           </div>
           <div>
-            <Label className="mb-2 block">City *</Label>
-            <Input name="city" defaultValue={dv.city} required />
+            <Label className="mb-2 block">City</Label>
+            <Input name="city" defaultValue={dv.city} />
           </div>
           <div>
             <Label className="mb-2 block">Logo URL</Label>
@@ -115,8 +102,8 @@ export function MerchantForm({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ACTIVE">Active</SelectItem>
-                <SelectItem value="INACTIVE">Inactive</SelectItem>
                 <SelectItem value="SUSPENDED">Suspended</SelectItem>
+                <SelectItem value="DISABLED">Disabled</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -130,7 +117,7 @@ export function MerchantForm({
           Cancel
         </Button>
         <Button type="submit" disabled={pending}>
-          {pending ? "Saving..." : mode === "create" ? "Create merchant" : "Save changes"}
+          {pending ? "Saving..." : "Save changes"}
         </Button>
       </div>
     </form>

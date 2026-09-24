@@ -29,6 +29,7 @@ export default async function MerchantSettingsPage() {
           {can(user, "settings:manage") ? (
             <MerchantSettingsForm
               businessName={merchant.businessName}
+              merchantName={merchant.merchantName}
               phone={merchant.phone}
               businessAddress={merchant.businessAddress}
               city={merchant.city}
@@ -36,7 +37,7 @@ export default async function MerchantSettingsPage() {
               logoUrl={merchant.logoUrl}
             />
           ) : (
-            <p className="text-sm text-muted-foreground">{merchant.businessName}</p>
+            <p className="text-sm text-muted-foreground">{merchant.businessName ?? "Not set"}</p>
           )}
         </CardContent>
       </Card>

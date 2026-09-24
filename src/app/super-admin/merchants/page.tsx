@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PaginationBar } from "@/components/ui/pagination-bar";
 import { MerchantFilters } from "@/components/merchants/merchant-filters";
+import { MerchantRowActions } from "@/components/merchants/merchant-row-actions";
 import type { MerchantStatus } from "@prisma/client";
 
 export default async function MerchantsPage({
@@ -17,7 +18,6 @@ export default async function MerchantsPage({
   const result = await listMerchants({
     search: sp.search,
     status: (sp.status as MerchantStatus | "ALL") ?? "ALL",
-    country: sp.country,
     page: sp.page ? Number(sp.page) : 1,
   });
 
@@ -39,13 +39,13 @@ export default async function MerchantsPage({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Business</TableHead>
-              <TableHead>Merchant code</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead>Shipments</TableHead>
+              <TableHead>Merchant ID</TableHead>
+              <TableHead>Email</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Shipments</TableHead>
               <TableHead>Created</TableHead>
+              <TableHead>Last login</TableHead>
+              <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -57,26 +57,31 @@ export default async function MerchantsPage({
                 </TableCell>
               </TableRow>
             )}
-            {result.items.map((m) => (
-              <TableRow key={m.id}>
-                <TableCell>
-                  <Link href={`/super-admin/merchants/${m.id}`} className="font-medium hover:underline">
-                    {m.businessName}
-                  </Link>
-                  <p className="text-xs text-muted-foreground">{m.email}</p>
-                </TableCell>
-                <TableCell className="font-mono text-xs">{m.merchantCode}</TableCell>
-                <TableCell>{m.merchantName}</TableCell>
-                <TableCell>
-                  {m.city}, {m.country}
-                </TableCell>
-                <TableCell>{m._count.shipments}</TableCell>
-                <TableCell>
-                  <Badge variant={m.status === "ACTIVE" ? "default" : "secondary"}>{m.status}</Badge>
-                </TableCell>
-                <TableCell className="text-muted-foreground">{new Date(m.createdAt).toLocaleDateString()}</TableCell>
-              </TableRow>
-            ))}
+            {result.items.map((m) => {
+              const owner = m.users[0];
+              return (
+                <TableRow key={m.id}>
+                  <TableCell className="font-mono text-xs">
+                    <Link href={`/super-admin/merchants/${m.id}`} className="font-medium hover:underline">
+                      {m.merchantCode}
+                    </Link>
+                    {m.businessName && <p className="font-sans text-xs text-muted-foreground">{m.businessName}</p>}
+                  </TableCell>
+                  <TableCell>{m.email}</TableCell>
+                  <TableCell>
+                    <Badge variant={m.status === "ACTIVE" ? "default" : "secondary"}>{m.status}</Badge>
+                  </TableCell>
+                  <TableCell>{m._count.shipments}</TableCell>
+                  <TableCell className="text-muted-foreground">{new Date(m.createdAt).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {owner?.lastLoginAt ? new Date(owner.lastLoginAt).toLocaleDateString() : "Never"}
+                  </TableCell>
+                  <TableCell>
+                    <MerchantRowActions merchantId={m.id} ownerUserId={owner?.id ?? null} status={m.status} />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

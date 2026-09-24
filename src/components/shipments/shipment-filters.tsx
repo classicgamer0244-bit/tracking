@@ -17,7 +17,7 @@ import { SHIPMENT_STATUS_LABELS } from "@/lib/shipment-status";
 export function ShipmentFilters({
   merchants,
 }: {
-  merchants?: { id: string; businessName: string }[];
+  merchants?: { id: string; businessName: string | null }[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -85,7 +85,7 @@ export function ShipmentFilters({
             <SelectItem value="ALL">All merchants</SelectItem>
             {merchants.map((m) => (
               <SelectItem key={m.id} value={m.id}>
-                {m.businessName}
+                {m.businessName ?? "(no business name)"}
               </SelectItem>
             ))}
           </SelectContent>

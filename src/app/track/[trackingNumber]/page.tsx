@@ -78,7 +78,7 @@ export default async function TrackResultPage({
             />
             <InfoStat icon={Package} label="Shipment type" value={shipment.shipmentType} />
             {shipment.weight != null && <InfoStat icon={Package} label="Weight" value={`${shipment.weight} kg`} />}
-            <InfoStat icon={Building2} label="Shipped by" value={shipment.merchant.businessName} />
+            <InfoStat icon={Building2} label="Shipped by" value={shipment.merchant.businessName ?? shipment.merchant.merchantCode} />
             <InfoStat icon={MapPin} label="Destination region" value={`${shipment.recipientCity}, ${shipment.recipientCountry}`} />
           </CardContent>
         </Card>
@@ -117,7 +117,9 @@ export default async function TrackResultPage({
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Message {shipment.merchant.businessName}</CardTitle>
+            <CardTitle className="text-base">
+              Message {shipment.merchant.businessName ?? "the merchant"}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ContactMerchantForm trackingNumber={shipment.trackingNumber} />

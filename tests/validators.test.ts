@@ -5,19 +5,12 @@ import { contactMerchantSchema } from "@/lib/validators/message";
 
 describe("createMerchantSchema", () => {
   const valid = {
-    businessName: "Acme Logistics",
-    merchantName: "Jane Doe",
     email: "jane@acme.test",
-    phone: "+1 555 0100",
-    username: "acme",
     password: "supersecret1",
-    businessAddress: "1 Main St",
-    country: "USA",
-    city: "Springfield",
-    status: "ACTIVE",
+    confirmPassword: "supersecret1",
   };
 
-  it("accepts a fully valid merchant payload", () => {
+  it("accepts email + password + matching confirmation", () => {
     expect(createMerchantSchema.safeParse(valid).success).toBe(true);
   });
 
@@ -27,12 +20,12 @@ describe("createMerchantSchema", () => {
   });
 
   it("rejects a short password", () => {
-    const result = createMerchantSchema.safeParse({ ...valid, password: "short" });
+    const result = createMerchantSchema.safeParse({ ...valid, password: "short", confirmPassword: "short" });
     expect(result.success).toBe(false);
   });
 
-  it("rejects a username with invalid characters", () => {
-    const result = createMerchantSchema.safeParse({ ...valid, username: "not a username!" });
+  it("rejects a mismatched confirmation password", () => {
+    const result = createMerchantSchema.safeParse({ ...valid, confirmPassword: "somethingElse1" });
     expect(result.success).toBe(false);
   });
 });

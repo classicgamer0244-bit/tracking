@@ -28,7 +28,7 @@ import { ShipmentStatusBadge } from "@/components/tracking/status-badge";
 import { archiveShipmentAction, deleteShipmentAction } from "@/actions/shipments";
 import type { Shipment, ShipmentStatus } from "@prisma/client";
 
-type Row = Shipment & { merchant?: { businessName: string; merchantCode: string } };
+type Row = Shipment & { merchant?: { businessName: string | null; merchantCode: string } };
 
 export function ShipmentTable({
   shipments,

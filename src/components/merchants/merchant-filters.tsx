@@ -41,7 +41,7 @@ export function MerchantFilters() {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search business, contact, email, code..."
+          placeholder="Search by email or merchant ID..."
           className="w-72"
         />
         <Button type="submit" size="icon" variant="outline">
@@ -56,17 +56,10 @@ export function MerchantFilters() {
         <SelectContent>
           <SelectItem value="ALL">All statuses</SelectItem>
           <SelectItem value="ACTIVE">Active</SelectItem>
-          <SelectItem value="INACTIVE">Inactive</SelectItem>
           <SelectItem value="SUSPENDED">Suspended</SelectItem>
+          <SelectItem value="DISABLED">Disabled</SelectItem>
         </SelectContent>
       </Select>
-
-      <Input
-        defaultValue={searchParams.get("country") ?? ""}
-        placeholder="Country"
-        className="w-36"
-        onBlur={(e) => update({ country: e.target.value })}
-      />
     </div>
   );
 }

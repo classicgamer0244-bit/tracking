@@ -4,9 +4,10 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireMerchantUser } from "@/lib/session";
 import { requirePermission } from "@/lib/permissions";
-import { hashPassword, generateTempPassword } from "@/lib/password";
+import { hashPassword } from "@/lib/password";
 import { recordAudit } from "@/lib/audit";
 import { createStaffSchema } from "@/lib/validators/staff";
+import { setPasswordSchema } from "@/lib/validators/merchant";
 import type { ActionResult } from "@/actions/shipments";
 
 export async function createStaffAction(
@@ -112,17 +113,23 @@ export async function deleteStaffAction(staffId: string): Promise<ActionResult> 
 
 export async function resetStaffPasswordAction(
   staffId: string,
-): Promise<ActionResult & { tempPassword?: string }> {
+  formData: FormData,
+): Promise<ActionResult> {
   const actor = await requireMerchantUser();
   requirePermission(actor, "staff:manage");
+
+  const raw = Object.fromEntries(formData.entries());
+  const parsed = setPasswordSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
+  }
 
   const staff = await prisma.user.findUnique({ where: { id: staffId } });
   if (!staff || staff.merchantId !== actor.merchantId) {
     return { success: false, error: "Staff member not found" };
   }
 
-  const tempPassword = generateTempPassword();
-  const passwordHash = await hashPassword(tempPassword);
+  const passwordHash = await hashPassword(parsed.data.newPassword);
   await prisma.user.update({ where: { id: staffId }, data: { passwordHash } });
 
   await recordAudit({
@@ -135,5 +142,5 @@ export async function resetStaffPasswordAction(
   });
 
   revalidatePath("/merchant/staff");
-  return { success: true, tempPassword };
+  return { success: true };
 }

@@ -118,7 +118,6 @@ async function main() {
         merchantName: seed.merchantName,
         email: seed.email,
         phone: "+1 555 0100",
-        username: seed.username,
         businessAddress: "100 Commerce Street",
         country: seed.country,
         city: seed.city,

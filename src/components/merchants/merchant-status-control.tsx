@@ -55,11 +55,11 @@ export function MerchantStatusControl({
           <DropdownMenuItem disabled={status === "ACTIVE"} onClick={() => setStatus("ACTIVE")}>
             Activate
           </DropdownMenuItem>
-          <DropdownMenuItem disabled={status === "INACTIVE"} onClick={() => setStatus("INACTIVE")}>
-            Deactivate
-          </DropdownMenuItem>
           <DropdownMenuItem disabled={status === "SUSPENDED"} onClick={() => setStatus("SUSPENDED")}>
             Suspend
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled={status === "DISABLED"} onClick={() => setStatus("DISABLED")}>
+            Disable
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

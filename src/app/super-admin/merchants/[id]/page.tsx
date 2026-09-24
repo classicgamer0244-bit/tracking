@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getMerchantDetail } from "@/lib/queries/merchants";
 import { MerchantForm } from "@/components/merchants/merchant-form";
 import { MerchantStatusControl } from "@/components/merchants/merchant-status-control";
-import { ResetPasswordButton } from "@/components/shared/reset-password-button";
+import { SetPasswordDialog } from "@/components/shared/set-password-dialog";
 import { ShipmentStatusBadge } from "@/components/tracking/status-badge";
 import { updateMerchantAction, resetMerchantPasswordAction } from "@/actions/merchants";
 import { SHIPMENT_STATUS_LABELS } from "@/lib/shipment-status";
@@ -18,17 +18,20 @@ export default async function MerchantDetailPage({ params }: { params: Promise<{
   if (!data) notFound();
 
   const { merchant, shipmentsByStatus, recentAuditLogs, recentShipments } = data;
+  const profileIncomplete = !merchant.businessName;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">{merchant.businessName}</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">{merchant.businessName ?? merchant.email}</h1>
             <Badge variant={merchant.status === "ACTIVE" ? "default" : "secondary"}>{merchant.status}</Badge>
+            {profileIncomplete && <Badge variant="outline">Profile incomplete</Badge>}
           </div>
           <p className="text-muted-foreground">
-            {merchant.merchantCode} · {merchant.city}, {merchant.country} · Created{" "}
+            {merchant.merchantCode}
+            {merchant.city && merchant.country ? ` · ${merchant.city}, ${merchant.country}` : ""} · Created{" "}
             {new Date(merchant.createdAt).toLocaleDateString()}
           </p>
         </div>
@@ -66,11 +69,11 @@ export default async function MerchantDetailPage({ params }: { params: Promise<{
               <CardTitle className="text-base">Contact information</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-3 sm:grid-cols-2">
-              <Row label="Merchant contact" value={merchant.merchantName} />
+              <Row label="Merchant ID" value={merchant.merchantCode} />
               <Row label="Email" value={merchant.email} />
-              <Row label="Phone" value={merchant.phone} />
-              <Row label="Username" value={merchant.username} />
-              <Row label="Business address" value={merchant.businessAddress} />
+              <Row label="Merchant contact" value={merchant.merchantName ?? "—"} />
+              <Row label="Phone" value={merchant.phone ?? "—"} />
+              <Row label="Business address" value={merchant.businessAddress ?? "—"} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -85,6 +88,7 @@ export default async function MerchantDetailPage({ params }: { params: Promise<{
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Last login</TableHead>
                     <TableHead className="w-40" />
                   </TableRow>
                 </TableHeader>
@@ -97,8 +101,11 @@ export default async function MerchantDetailPage({ params }: { params: Promise<{
                       <TableCell>
                         <Badge variant={u.status === "ACTIVE" ? "default" : "secondary"}>{u.status}</Badge>
                       </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : "Never"}
+                      </TableCell>
                       <TableCell>
-                        <ResetPasswordButton userId={u.id} action={resetMerchantPasswordAction} />
+                        <SetPasswordDialog userId={u.id} action={resetMerchantPasswordAction} />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -189,17 +196,16 @@ export default async function MerchantDetailPage({ params }: { params: Promise<{
 
         <TabsContent value="edit">
           <MerchantForm
-            mode="edit"
             action={updateMerchantAction}
             defaultValues={{
               id: merchant.id,
-              businessName: merchant.businessName,
-              merchantName: merchant.merchantName,
+              businessName: merchant.businessName ?? undefined,
+              merchantName: merchant.merchantName ?? undefined,
               email: merchant.email,
-              phone: merchant.phone,
-              businessAddress: merchant.businessAddress,
-              country: merchant.country,
-              city: merchant.city,
+              phone: merchant.phone ?? undefined,
+              businessAddress: merchant.businessAddress ?? undefined,
+              country: merchant.country ?? undefined,
+              city: merchant.city ?? undefined,
               status: merchant.status,
               logoUrl: merchant.logoUrl ?? undefined,
             }}

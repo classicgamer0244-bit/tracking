@@ -162,7 +162,7 @@ function ConversationThread({
           <p className="font-medium">{conversation.customer.name}</p>
           <p className="text-xs text-muted-foreground">
             {conversation.customer.email} · {conversation.shipment.trackingNumber}
-            {conversation.merchant && ` · ${conversation.merchant.businessName}`}
+            {conversation.merchant?.businessName && ` · ${conversation.merchant.businessName}`}
           </p>
         </div>
         <div className="flex items-center gap-2">

@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { hashPassword } from "@/lib/password";
+import { hashPassword, verifyPassword } from "@/lib/password";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 import { signIn } from "@/auth";
@@ -11,8 +11,35 @@ export async function loginAction(
   _prevState: { error: string | null },
   formData: FormData,
 ): Promise<{ error: string | null }> {
-  const identifier = String(formData.get("identifier") ?? "");
+  const identifier = String(formData.get("identifier") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+
+  if (!identifier || !password) {
+    return { error: "Enter your email and password." };
+  }
+
+  // Resolve the account-status message ourselves, outside of the auth flow —
+  // NextAuth intentionally obscures errors thrown from authorize(), so we
+  // can't rely on it to tell "wrong password" apart from "correct password,
+  // suspended account". This check never runs unless the credentials match.
+  const identifierLower = identifier.toLowerCase();
+  const user = await prisma.user.findFirst({
+    where: { OR: [{ email: identifierLower }, { username: identifierLower }] },
+    include: { merchant: true },
+  });
+
+  if (user) {
+    const passwordMatches = await verifyPassword(password, user.passwordHash);
+    if (passwordMatches) {
+      if (user.status !== "ACTIVE") {
+        return { error: "Your account has been suspended. Contact your platform administrator." };
+      }
+      if (user.role !== "SUPER_ADMIN" && user.merchant && user.merchant.status !== "ACTIVE") {
+        const label = user.merchant.status === "DISABLED" ? "disabled" : "suspended";
+        return { error: `This merchant account has been ${label}. Contact your platform administrator.` };
+      }
+    }
+  }
 
   try {
     await signIn("credentials", {
@@ -23,7 +50,7 @@ export async function loginAction(
     return { error: null };
   } catch (err) {
     if (err instanceof AuthError) {
-      return { error: "Invalid email/username or password, or your account is not active." };
+      return { error: "Invalid email or password." };
     }
     // NEXT_REDIRECT is thrown by next-auth on success — rethrow so Next.js can handle it.
     throw err;

@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { ResetPasswordButton } from "@/components/shared/reset-password-button";
+import { SetPasswordDialog } from "@/components/shared/set-password-dialog";
 import { setStaffStatusAction, deleteStaffAction, resetStaffPasswordAction } from "@/actions/staff";
 import type { User } from "@prisma/client";
 
@@ -50,7 +50,7 @@ export function StaffList({ staff }: { staff: User[] }) {
             <TableCell>
               {s.role !== "MERCHANT_OWNER" && (
                 <div className="flex items-center justify-end gap-1">
-                  <ResetPasswordButton userId={s.id} action={resetStaffPasswordAction} />
+                  <SetPasswordDialog userId={s.id} action={resetStaffPasswordAction} />
                   <DropdownMenu>
                     <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="h-8 w-8" />}>
                       <MoreHorizontal className="h-4 w-4" />

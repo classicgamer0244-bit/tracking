@@ -41,7 +41,7 @@ export async function getLiveMapShipments(): Promise<{ shipments: MapShipment[];
       senderCountry: true,
       recipientCity: true,
       recipientCountry: true,
-      merchant: { select: { businessName: true } },
+      merchant: { select: { businessName: true, email: true } },
     },
   });
 
@@ -59,7 +59,7 @@ export async function getLiveMapShipments(): Promise<{ shipments: MapShipment[];
       trackingNumber: s.trackingNumber,
       status: s.status,
       bucket: statusBucket(s.status),
-      merchantName: s.merchant.businessName,
+      merchantName: s.merchant.businessName ?? s.merchant.email,
       origin: s.origin,
       destination: s.destination,
       currentLocation: s.currentLocation,

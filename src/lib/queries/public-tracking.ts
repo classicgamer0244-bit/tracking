@@ -25,7 +25,7 @@ export async function getPublicShipmentByTrackingNumber(trackingNumber: string) 
       senderCountry: true,
       recipientCity: true,
       recipientCountry: true,
-      merchant: { select: { businessName: true, status: true } },
+      merchant: { select: { businessName: true, merchantCode: true, status: true } },
       trackingEvents: {
         where: { visibility: "PUBLIC" },
         orderBy: { occurredAt: "desc" },

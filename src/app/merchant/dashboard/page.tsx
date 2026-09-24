@@ -10,7 +10,9 @@ import {
   Activity,
 } from "lucide-react";
 import { requireMerchantUser } from "@/lib/session";
+import { prisma } from "@/lib/prisma";
 import { getMerchantDashboard } from "@/lib/queries/dashboard";
+import { ProfileIncompleteBanner } from "@/components/merchants/profile-incomplete-banner";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { TrendChart } from "@/components/dashboard/trend-chart";
 import { LiveShipmentsMap } from "@/components/dashboard/live-shipments-map";
@@ -21,7 +23,10 @@ import { Button } from "@/components/ui/button";
 
 export default async function MerchantDashboardPage() {
   const user = await requireMerchantUser();
-  const stats = await getMerchantDashboard(user.merchantId);
+  const [stats, merchant] = await Promise.all([
+    getMerchantDashboard(user.merchantId),
+    prisma.merchant.findUnique({ where: { id: user.merchantId }, select: { businessName: true } }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -29,6 +34,8 @@ export default async function MerchantDashboardPage() {
         <h1 className="font-heading text-2xl font-semibold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">Welcome back, {user.name}.</p>
       </div>
+
+      {!merchant?.businessName && <ProfileIncompleteBanner />}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Total shipments" value={stats.total} icon={Package} tone="neutral" trend={stats.shipmentsTrend} />

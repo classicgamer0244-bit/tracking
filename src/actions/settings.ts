@@ -52,17 +52,24 @@ export async function updateMerchantSettingsAction(
   requirePermission(actor, "settings:manage");
 
   const businessName = String(formData.get("businessName") ?? "").trim();
+  const merchantName = String(formData.get("merchantName") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").trim();
   const businessAddress = String(formData.get("businessAddress") ?? "").trim();
   const city = String(formData.get("city") ?? "").trim();
   const country = String(formData.get("country") ?? "").trim();
   const logoUrl = String(formData.get("logoUrl") ?? "").trim();
 
-  if (!businessName) return { success: false, error: "Business name is required" };
-
   await prisma.merchant.update({
     where: { id: actor.merchantId },
-    data: { businessName, phone, businessAddress, city, country, logoUrl: logoUrl || null },
+    data: {
+      businessName: businessName || null,
+      merchantName: merchantName || null,
+      phone: phone || null,
+      businessAddress: businessAddress || null,
+      city: city || null,
+      country: country || null,
+      logoUrl: logoUrl || null,
+    },
   });
 
   await recordAudit({

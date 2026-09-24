@@ -27,8 +27,8 @@ enum UserStatus {
 
 enum MerchantStatus {
   ACTIVE
-  INACTIVE
   SUSPENDED
+  DISABLED
 }
 
 enum ShipmentStatus {
@@ -98,6 +98,7 @@ model User {
 
   resetToken       String?   @unique
   resetTokenExpiry DateTime?
+  lastLoginAt      DateTime?
 
   createdEvents    TrackingEvent[] @relation("EventCreatedBy")
   sentMessages     Message[]       @relation("MessageSender")
@@ -114,14 +115,13 @@ model User {
 model Merchant {
   id           String         @id @default(cuid())
   merchantCode String         @unique
-  businessName String
-  merchantName String
+  businessName String?
+  merchantName String?
   email        String         @unique
-  phone        String
-  username     String         @unique
-  businessAddress String
-  country      String
-  city         String
+  phone        String?
+  businessAddress String?
+  country      String?
+  city         String?
   status       MerchantStatus @default(ACTIVE)
   logoUrl      String?
   notificationPrefs Json?

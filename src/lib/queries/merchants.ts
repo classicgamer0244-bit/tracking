@@ -5,7 +5,6 @@ import type { Prisma, MerchantStatus } from "@prisma/client";
 export type MerchantListFilters = {
   search?: string;
   status?: MerchantStatus | "ALL";
-  country?: string;
   page?: number;
   pageSize?: number;
 };
@@ -16,13 +15,11 @@ export async function listMerchants(filters: MerchantListFilters) {
 
   const where: Prisma.MerchantWhereInput = {};
   if (filters.status && filters.status !== "ALL") where.status = filters.status;
-  if (filters.country) where.country = { equals: filters.country, mode: "insensitive" };
   if (filters.search) {
     where.OR = [
-      { businessName: { contains: filters.search, mode: "insensitive" } },
-      { merchantName: { contains: filters.search, mode: "insensitive" } },
       { email: { contains: filters.search, mode: "insensitive" } },
       { merchantCode: { contains: filters.search, mode: "insensitive" } },
+      { businessName: { contains: filters.search, mode: "insensitive" } },
     ];
   }
 
@@ -32,7 +29,10 @@ export async function listMerchants(filters: MerchantListFilters) {
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
-      include: { _count: { select: { shipments: true, users: true } } },
+      include: {
+        _count: { select: { shipments: true, users: true } },
+        users: { where: { role: "MERCHANT_OWNER" }, select: { id: true, lastLoginAt: true }, take: 1 },
+      },
     }),
     prisma.merchant.count({ where }),
   ]);
