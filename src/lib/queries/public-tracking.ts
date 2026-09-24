@@ -21,6 +21,8 @@ export async function getPublicShipmentByTrackingNumber(trackingNumber: string) 
       currentLocation: true,
       estimatedDelivery: true,
       createdAt: true,
+      senderCity: true,
+      senderCountry: true,
       recipientCity: true,
       recipientCountry: true,
       merchant: { select: { businessName: true, status: true } },

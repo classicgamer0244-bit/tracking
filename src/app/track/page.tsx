@@ -3,18 +3,36 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { PublicHeader } from "@/components/brand/public-header";
+
+const FAQS = [
+  {
+    q: "What is a tracking number, and where do I find it?",
+    a: "It's the unique code the merchant gave you when your order shipped — usually in your order confirmation or shipping notification email. On ShipTrack it looks like STK-7F3K9QP2A1.",
+  },
+  {
+    q: "When will my tracking information appear?",
+    a: "As soon as the merchant creates the shipment and generates a label, you'll see a \"Shipment Created\" event. Updates continue to appear as the package moves.",
+  },
+  {
+    q: "Why isn't my tracking number working?",
+    a: "Double-check for typos — tracking numbers don't include spaces. If it still doesn't work, the merchant may not have created the shipment yet, or the number may belong to a different courier.",
+  },
+  {
+    q: "Can I contact the merchant about my shipment?",
+    a: "Yes — every tracking result page has a \"Message the merchant\" form at the bottom. Your message is routed straight to the merchant who shipped your order.",
+  },
+];
 
 export default function TrackSearchPage() {
   const router = useRouter();
   const [value, setValue] = useState("");
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <PublicHeader
         action={
           <Button variant="outline" render={<Link href="/login" />}>
@@ -23,53 +41,54 @@ export default function TrackSearchPage() {
         }
       />
 
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.35]"
-        style={{
-          backgroundImage: "radial-gradient(circle, var(--foreground) 1px, transparent 1px)",
-          backgroundSize: "22px 22px",
-          maskImage: "radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent)",
-        }}
-      />
+      <main className="flex-1">
+        <section className="border-b border-border px-4 py-12 sm:px-8 sm:py-16">
+          <div className="mx-auto max-w-4xl">
+            <h1 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl">Track &amp; Trace</h1>
+            <p className="mt-3 max-w-xl text-muted-foreground">
+              Enter a tracking number to see live status, location, and delivery estimates — no
+              account needed.
+            </p>
 
-      <main className="flex flex-1 items-center justify-center px-4 py-16">
-        <div className="w-full max-w-lg">
-          <div className="mb-6 text-center">
-            <span className="inline-block -rotate-2 rounded-md border-2 border-ink bg-primary px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-primary-foreground shadow-cargo-sm">
-              No account needed
-            </span>
-            <h1 className="mt-5 font-heading text-3xl font-bold tracking-tight sm:text-4xl">
-              Track your shipment
-            </h1>
-            <p className="mt-2 text-muted-foreground">Enter your tracking number below.</p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (value.trim()) router.push(`/track/${encodeURIComponent(value.trim().toUpperCase())}`);
+              }}
+              className="mt-8 flex flex-col gap-3 rounded-xl bg-secondary/60 p-3 sm:flex-row sm:p-4"
+            >
+              <Input
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="Enter your tracking number"
+                className="h-12 flex-1 border-2 border-ink bg-card font-mono text-base uppercase"
+                autoFocus
+              />
+              <Button type="submit" size="lg" className="h-12 sm:px-8">
+                <Search className="h-4 w-4" />
+                Track
+              </Button>
+            </form>
+            <p className="mt-2 text-xs text-muted-foreground">e.g. STK-7F3K9QP2A1</p>
           </div>
-          <Card className="border-2 border-ink shadow-cargo">
-            <CardHeader>
-              <CardTitle className="text-base">Tracking number</CardTitle>
-              <CardDescription className="font-mono">e.g. STK-7F3K9QP2A1</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (value.trim()) router.push(`/track/${encodeURIComponent(value.trim().toUpperCase())}`);
-                }}
-                className="flex gap-2"
-              >
-                <Input
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                  placeholder="Enter tracking number"
-                  className="border-2 border-ink font-mono uppercase"
-                />
-                <Button type="submit">
-                  <Search className="h-4 w-4" />
-                  Track
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+        </section>
+
+        <section className="px-4 py-14 sm:px-8">
+          <div className="mx-auto max-w-4xl">
+            <h2 className="font-heading text-2xl font-bold tracking-tight">Frequently asked questions</h2>
+            <div className="mt-6 divide-y divide-border border-t border-border">
+              {FAQS.map((item) => (
+                <details key={item.q} className="group py-4">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
+                    {item.q}
+                    <Plus className="h-4 w-4 shrink-0 text-primary transition-transform group-open:rotate-45" />
+                  </summary>
+                  <p className="mt-3 text-sm text-muted-foreground">{item.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );

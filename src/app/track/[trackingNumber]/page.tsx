@@ -3,9 +3,12 @@ import { Package, MapPin, CalendarClock, Building2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getPublicShipmentByTrackingNumber } from "@/lib/queries/public-tracking";
+import { resolvePosition } from "@/lib/geo/resolve-position";
 import { MilestoneStepper, EventHistoryList } from "@/components/tracking/timeline";
 import { ShipmentStatusBadge } from "@/components/tracking/status-badge";
 import { ContactMerchantForm } from "@/components/tracking/contact-merchant-form";
+import { ShipmentRouteMap } from "@/components/tracking/shipment-route-map";
+import { PublicHeader } from "@/components/brand/public-header";
 
 export default async function TrackResultPage({
   params,
@@ -17,11 +20,11 @@ export default async function TrackResultPage({
 
   if (!shipment) {
     return (
-      <div className="flex min-h-screen flex-col">
-        <TrackHeader />
+      <div className="flex min-h-screen flex-col bg-background">
+        <PublicHeader action={<HeaderAction />} />
         <main className="flex flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
           <Package className="h-12 w-12 text-muted-foreground" />
-          <h1 className="text-2xl font-semibold">Tracking number not found</h1>
+          <h1 className="font-heading text-2xl font-bold">Tracking number not found</h1>
           <p className="max-w-md text-muted-foreground">
             We couldn&apos;t find a shipment matching &ldquo;{trackingNumber}&rdquo;. Double-check the
             number and try again.
@@ -32,11 +35,22 @@ export default async function TrackResultPage({
     );
   }
 
+  const position = resolvePosition({
+    status: shipment.status,
+    origin: shipment.origin,
+    destination: shipment.destination,
+    currentLocation: shipment.currentLocation,
+    senderCity: shipment.senderCity,
+    senderCountry: shipment.senderCountry,
+    recipientCity: shipment.recipientCity,
+    recipientCountry: shipment.recipientCountry,
+  });
+
   return (
-    <div className="flex min-h-screen flex-col bg-muted/20">
-      <TrackHeader />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div className="flex min-h-screen flex-col bg-background">
+      <PublicHeader action={<HeaderAction />} />
+      <main className="mx-auto w-full max-w-4xl flex-1 space-y-6 px-4 py-10">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm text-muted-foreground">Tracking number</p>
             <h1 className="font-mono text-2xl font-bold tracking-tight">{shipment.trackingNumber}</h1>
@@ -44,7 +58,7 @@ export default async function TrackResultPage({
           <ShipmentStatusBadge status={shipment.status} />
         </div>
 
-        <Card className="mb-6">
+        <Card>
           <CardContent className="grid gap-6 py-6 sm:grid-cols-2 lg:grid-cols-4">
             <InfoStat icon={MapPin} label="Origin" value={shipment.origin} />
             <InfoStat icon={MapPin} label="Destination" value={shipment.destination} />
@@ -69,7 +83,21 @@ export default async function TrackResultPage({
           </CardContent>
         </Card>
 
-        <Card className="mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Live location</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ShipmentRouteMap
+              origin={position.origin}
+              destination={position.destination}
+              current={position.current}
+              isDelivered={shipment.status === "DELIVERED"}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
           <CardHeader>
             <CardTitle className="text-base">Shipment progress</CardTitle>
           </CardHeader>
@@ -78,7 +106,7 @@ export default async function TrackResultPage({
           </CardContent>
         </Card>
 
-        <Card className="mb-6">
+        <Card>
           <CardHeader>
             <CardTitle className="text-base">Tracking history</CardTitle>
           </CardHeader>
@@ -120,18 +148,10 @@ function InfoStat({
   );
 }
 
-function TrackHeader() {
+function HeaderAction() {
   return (
-    <header className="border-b bg-background">
-      <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-        <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
-          <Package className="h-5 w-5 text-primary" />
-          ShipTrack
-        </Link>
-        <Button variant="ghost" render={<Link href="/track" />}>
-          Track another shipment
-        </Button>
-      </div>
-    </header>
+    <Button variant="ghost" render={<Link href="/track" />}>
+      Track another shipment
+    </Button>
   );
 }

@@ -5,7 +5,7 @@
  * purposes only — not suitable for anything requiring precision.
  */
 
-type LatLng = [number, number]; // [longitude, latitude] — d3-geo/react-simple-maps order
+export type LatLng = [number, number]; // [longitude, latitude] — d3-geo/react-simple-maps order
 
 const CITY_COORDS: Record<string, LatLng> = {
   "new york": [-74.006, 40.7128],
