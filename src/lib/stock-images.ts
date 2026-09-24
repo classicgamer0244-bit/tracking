@@ -4,7 +4,7 @@
  * verified-working URLs with consistent sizing/format params.
  */
 function unsplash(id: string, params = "") {
-  return `https://images.unsplash.com/${id}?auto=format&fit=crop&q=80${params}`;
+  return `https://images.unsplash.com/${id}?auto=format&fit=crop&q=95&w=2400${params}`;
 }
 
 export const STOCK_IMAGES = {

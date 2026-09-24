@@ -15,24 +15,25 @@ export default function LoginPage() {
   const [state, formAction, pending] = useActionState(loginAction, { error: null });
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12 sm:justify-end sm:px-12">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
       <Image
         src={STOCK_IMAGES.fulfillmentCenter}
         alt="Logistics fulfillment center"
         fill
         priority
+        quality={95}
         sizes="100vw"
         className="object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/50 to-ink/20" />
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 to-transparent p-10 text-white">
-        <p className="max-w-sm text-lg font-medium leading-snug">
+      <div className="absolute inset-0 bg-ink/55" />
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 to-transparent p-10 text-white">
+        <p className="mx-auto max-w-sm text-center text-lg font-medium leading-snug">
           Real-time visibility for every shipment, from pickup to final mile.
         </p>
       </div>
 
       <FadeIn className="relative z-10 w-full max-w-sm">
-        <Link href="/" className="mb-8 flex items-center justify-center gap-2 font-heading text-xl font-semibold text-white sm:justify-start">
+        <Link href="/" className="mb-8 flex items-center justify-center gap-2 font-heading text-xl font-semibold text-white">
           <LogoMark />
           ShipTrack
         </Link>
