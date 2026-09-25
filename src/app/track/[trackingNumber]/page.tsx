@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/shipments/copy-button";
 import { getPublicShipmentByTrackingNumber } from "@/lib/queries/public-tracking";
 import { resolvePosition } from "@/lib/geo/resolve-position";
-import { MilestoneStepper, EventHistoryList } from "@/components/tracking/timeline";
+import { MilestoneStepper } from "@/components/tracking/timeline";
 import { ShipmentStatusBadge } from "@/components/tracking/status-badge";
 import { ContactMerchantForm } from "@/components/tracking/contact-merchant-form";
 import { ShipmentRouteMap } from "@/components/tracking/shipment-route-map";
@@ -121,16 +121,7 @@ export default async function TrackResultPage({
               <CardTitle className="text-base">Shipment progress</CardTitle>
             </CardHeader>
             <CardContent>
-              <MilestoneStepper currentStatus={shipment.status} />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Tracking history</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <EventHistoryList events={shipment.trackingEvents} />
+              <MilestoneStepper currentStatus={shipment.status} events={shipment.trackingEvents} />
             </CardContent>
           </Card>
         </div>

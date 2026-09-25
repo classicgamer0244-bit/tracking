@@ -31,6 +31,13 @@ export async function ShipmentDetailView({
   if (!shipment) notFound();
 
   const boundUpdate = updateShipmentAction.bind(null, shipment.id);
+  const timelineEvents = shipment.trackingEvents.map((e) => ({
+    id: e.id,
+    status: e.status,
+    location: e.location + (e.visibility === "INTERNAL" ? " (internal only)" : ""),
+    occurredAt: e.occurredAt,
+    description: e.description + (e.internalNote ? ` — Note: ${e.internalNote}` : ""),
+  }));
 
   return (
     <div className="space-y-6">
@@ -136,7 +143,7 @@ export async function ShipmentDetailView({
               <CardTitle className="text-base">Progress</CardTitle>
             </CardHeader>
             <CardContent>
-              <MilestoneStepper currentStatus={shipment.status} />
+              <MilestoneStepper currentStatus={shipment.status} events={timelineEvents} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -149,15 +156,7 @@ export async function ShipmentDetailView({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <EventHistoryList
-                events={shipment.trackingEvents.map((e) => ({
-                  id: e.id,
-                  status: e.status,
-                  location: e.location + (e.visibility === "INTERNAL" ? " (internal only)" : ""),
-                  occurredAt: e.occurredAt,
-                  description: e.description + (e.internalNote ? ` — Note: ${e.internalNote}` : ""),
-                }))}
-              />
+              <EventHistoryList events={timelineEvents} />
             </CardContent>
           </Card>
         </TabsContent>

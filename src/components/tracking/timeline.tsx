@@ -3,10 +3,53 @@
 import { Check, Circle, AlertTriangle } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { ShipmentStatus } from "@prisma/client";
-import { SHIPMENT_STATUS_LABELS, isException, statusIndex } from "@/lib/shipment-status";
+import {
+  SHIPMENT_STATUS_LABELS,
+  isException,
+  statusIndex,
+  PROGRESS_MILESTONES,
+  milestoneIndexForStatus,
+} from "@/lib/shipment-status";
 import { cn } from "@/lib/utils";
 
-export function MilestoneStepper({ currentStatus }: { currentStatus: ShipmentStatus }) {
+export type TimelineEvent = {
+  id: string;
+  status: ShipmentStatus;
+  location: string;
+  occurredAt: Date | string;
+  description: string;
+};
+
+/** Groups events chronologically into the milestone they belong under. An
+ * event's own status decides its bucket; exception statuses (no fixed
+ * position in the order) fall into whichever milestone was active when they
+ * were recorded, since the pointer only advances on a real, ordered status. */
+function bucketEventsByMilestone(events: TimelineEvent[]): TimelineEvent[][] {
+  const buckets: TimelineEvent[][] = PROGRESS_MILESTONES.map(() => []);
+  const sorted = [...events].sort(
+    (a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime(),
+  );
+  let pointer = 0;
+  for (const event of sorted) {
+    const milestoneIdx = milestoneIndexForStatus(event.status);
+    if (milestoneIdx >= 0) pointer = Math.max(pointer, milestoneIdx);
+    buckets[pointer].push(event);
+  }
+  return buckets;
+}
+
+function formatEventTime(value: Date | string) {
+  const date = new Date(value);
+  return `${date.toLocaleDateString(undefined, { month: "short", day: "numeric" })} · ${date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`;
+}
+
+export function MilestoneStepper({
+  currentStatus,
+  events = [],
+}: {
+  currentStatus: ShipmentStatus;
+  events?: TimelineEvent[];
+}) {
   const reduceMotion = useReducedMotion();
 
   if (isException(currentStatus)) {
@@ -21,16 +64,8 @@ export function MilestoneStepper({ currentStatus }: { currentStatus: ShipmentSta
   }
 
   const currentIdx = statusIndex(currentStatus);
-  // A condensed set of milestones for a clean horizontal stepper.
-  const milestones: ShipmentStatus[] = [
-    "SHIPMENT_CREATED",
-    "PICKED_UP",
-    "DEPARTED_FACILITY",
-    "IN_TRANSIT",
-    "CUSTOMS_CLEARED",
-    "OUT_FOR_DELIVERY",
-    "DELIVERED",
-  ];
+  const milestones = PROGRESS_MILESTONES;
+  const buckets = bucketEventsByMilestone(events);
 
   return (
     <div className="flex flex-col">
@@ -40,6 +75,7 @@ export function MilestoneStepper({ currentStatus }: { currentStatus: ShipmentSta
         const lineAfterDone = i === milestones.length - 1 ? false : currentIdx > idx;
         const isCurrent = status === currentStatus || (i === milestones.length - 1 ? false : idx <= currentIdx && statusIndex(milestones[i + 1]) > currentIdx);
         const isLast = i === milestones.length - 1;
+        const stepEvents = done ? buckets[i].slice().reverse() : [];
         return (
           <div key={status} className="flex gap-4">
             <div className="flex flex-col items-center">
@@ -72,29 +108,30 @@ export function MilestoneStepper({ currentStatus }: { currentStatus: ShipmentSta
                 </div>
               )}
             </div>
-            <span
-              className={cn(
-                "pb-8 pt-1 text-sm",
-                isLast && "pb-0",
-                done ? "font-medium text-foreground" : "text-muted-foreground",
+            <div className={cn("min-w-0 flex-1 pb-8", isLast && "pb-0")}>
+              <span className={cn("pt-1 text-sm", done ? "font-medium text-foreground" : "text-muted-foreground")}>
+                {SHIPMENT_STATUS_LABELS[status]}
+              </span>
+              {stepEvents.length > 0 && (
+                <ul className="mt-2 space-y-2 border-l border-border pl-4">
+                  {stepEvents.map((event) => (
+                    <li key={event.id} className="text-xs">
+                      <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+                        <span className="font-medium text-foreground">{event.location}</span>
+                        <time className="shrink-0 text-muted-foreground">{formatEventTime(event.occurredAt)}</time>
+                      </div>
+                      <p className="text-muted-foreground">{event.description}</p>
+                    </li>
+                  ))}
+                </ul>
               )}
-            >
-              {SHIPMENT_STATUS_LABELS[status]}
-            </span>
+            </div>
           </div>
         );
       })}
     </div>
   );
 }
-
-export type TimelineEvent = {
-  id: string;
-  status: ShipmentStatus;
-  location: string;
-  occurredAt: Date | string;
-  description: string;
-};
 
 export function EventHistoryList({ events }: { events: TimelineEvent[] }) {
   if (events.length === 0) {

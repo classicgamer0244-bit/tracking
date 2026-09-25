@@ -66,6 +66,31 @@ export function statusIndex(status: ShipmentStatus): number {
   return SHIPMENT_STATUS_ORDER.indexOf(status);
 }
 
+/** The condensed set of milestones shown on the public/merchant progress stepper. */
+export const PROGRESS_MILESTONES: ShipmentStatus[] = [
+  "SHIPMENT_CREATED",
+  "PICKED_UP",
+  "DEPARTED_FACILITY",
+  "IN_TRANSIT",
+  "CUSTOMS_CLEARED",
+  "OUT_FOR_DELIVERY",
+  "DELIVERED",
+];
+
+/** Maps any granular status onto the nearest milestone at or before it in
+ * SHIPMENT_STATUS_ORDER, so every real status update groups under one of
+ * the seven progress steps. Returns -1 for exception statuses (the caller
+ * decides how to place those, typically under the current active step). */
+export function milestoneIndexForStatus(status: ShipmentStatus): number {
+  const idx = statusIndex(status);
+  if (idx < 0) return -1;
+  let milestoneIdx = 0;
+  for (let i = 0; i < PROGRESS_MILESTONES.length; i++) {
+    if (statusIndex(PROGRESS_MILESTONES[i]) <= idx) milestoneIdx = i;
+  }
+  return milestoneIdx;
+}
+
 export function isException(status: ShipmentStatus): boolean {
   return EXCEPTION_STATUSES.includes(status);
 }
