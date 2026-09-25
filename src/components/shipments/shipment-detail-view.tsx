@@ -128,10 +128,10 @@ export async function ShipmentDetailView({
             <CardHeader>
               <CardTitle className="text-base">Route</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-3">
-              <Row label="Origin" value={shipment.origin} />
-              <Row label="Destination" value={shipment.destination} />
-              <Row label="Current location" value={shipment.currentLocation ?? "—"} />
+            <CardContent className="flex flex-wrap gap-x-10 gap-y-3">
+              <RouteStat label="Origin" value={shipment.origin} />
+              <RouteStat label="Destination" value={shipment.destination} />
+              <RouteStat label="Current location" value={shipment.currentLocation ?? "—"} />
             </CardContent>
           </Card>
 
@@ -264,6 +264,15 @@ function Row({ label, value }: { label: string; value: string }) {
     <div className="flex justify-between gap-4 text-sm">
       <span className="text-muted-foreground">{label}</span>
       <span className="text-right font-medium">{value}</span>
+    </div>
+  );
+}
+
+function RouteStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline gap-1.5 text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="font-medium">{value}</span>
     </div>
   );
 }
