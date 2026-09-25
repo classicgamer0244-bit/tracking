@@ -95,9 +95,6 @@ export function ShipmentForm({
       <Section title="Route" description="Where this shipment is coming from and going to.">
         <Field label="Origin" name="origin" defaultValue={dv.origin} required />
         <Field label="Destination" name="destination" defaultValue={dv.destination} required />
-        <Field label="Current location" name="currentLocation" defaultValue={dv.currentLocation} placeholder="Defaults to origin" />
-        <Field label="Departure location" name="departureLocation" defaultValue={dv.departureLocation} />
-        <Field label="Arrival location" name="arrivalLocation" defaultValue={dv.arrivalLocation} />
       </Section>
 
       <Section title="Sender information">
