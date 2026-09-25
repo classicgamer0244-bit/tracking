@@ -24,9 +24,6 @@ function toShipmentData(input: ShipmentFormInput) {
     estimatedDelivery: input.estimatedDelivery ? new Date(input.estimatedDelivery) : null,
     origin: input.origin,
     destination: input.destination,
-    currentLocation: input.currentLocation || input.origin,
-    departureLocation: input.departureLocation || null,
-    arrivalLocation: input.arrivalLocation || null,
     senderName: input.senderName,
     senderEmail: input.senderEmail || null,
     senderPhone: input.senderPhone || null,
@@ -64,21 +61,55 @@ export async function createShipmentAction(
   const trackingNumber = generateTrackingNumber();
   const referenceId = generateReferenceId();
 
+  const merchant = await prisma.merchant.findUnique({
+    where: { id: actor.merchantId },
+    select: { businessName: true, merchantCode: true },
+  });
+  const merchantName = merchant?.businessName ?? merchant?.merchantCode ?? "the merchant";
+
+  // A brand-new shipment has always just been picked up and sent out from the
+  // merchant's own facility, so those two early milestones are recorded
+  // automatically at creation — only later, real-world scans (in transit,
+  // customs, out for delivery, delivered) require an explicit Update status.
+  const now = Date.now();
   const shipment = await prisma.shipment.create({
     data: {
       trackingNumber,
       referenceId,
       merchantId: actor.merchantId,
-      status: "SHIPMENT_CREATED",
+      status: "DEPARTED_FACILITY",
       ...toShipmentData(parsed.data),
+      currentLocation: merchantName,
       trackingEvents: {
-        create: {
-          status: "SHIPMENT_CREATED",
-          location: parsed.data.origin,
-          description: "Shipment created and label generated.",
-          visibility: "PUBLIC",
-          createdByUserId: actor.id,
-        },
+        create: [
+          {
+            status: "SHIPMENT_CREATED",
+            location: parsed.data.origin,
+            description: "Shipment created and label generated.",
+            visibility: "PUBLIC",
+            createdByUserId: actor.id,
+            // Staggered into the past (never the future) so a real status
+            // update made moments later still sorts after all three of these
+            // in "most recent first" ordering everywhere else in the app.
+            occurredAt: new Date(now - 120_000),
+          },
+          {
+            status: "PICKED_UP",
+            location: merchantName,
+            description: `Picked up by ${merchantName}.`,
+            visibility: "PUBLIC",
+            createdByUserId: actor.id,
+            occurredAt: new Date(now - 60_000),
+          },
+          {
+            status: "DEPARTED_FACILITY",
+            location: merchantName,
+            description: `Departed ${merchantName} facility.`,
+            visibility: "PUBLIC",
+            createdByUserId: actor.id,
+            occurredAt: new Date(now),
+          },
+        ],
       },
     },
   });

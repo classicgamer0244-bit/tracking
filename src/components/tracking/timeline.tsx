@@ -22,11 +22,13 @@ export type TimelineEvent = {
 /** Groups events under the milestone their own status maps to — independent
  * of when they were recorded, so one backdated or out-of-order event can't
  * drag every later event into the wrong bucket. Exception statuses (no fixed
- * position in the order) fall back to bucket 0. */
-function bucketEventsByMilestone(events: TimelineEvent[]): TimelineEvent[][] {
+ * position in the order, e.g. Delayed) fall back to the shipment's current
+ * milestone, since that's the stage the exception actually happened at. */
+function bucketEventsByMilestone(events: TimelineEvent[], currentMilestoneIdx: number): TimelineEvent[][] {
   const buckets: TimelineEvent[][] = PROGRESS_MILESTONES.map(() => []);
   for (const event of events) {
-    const milestoneIdx = Math.max(0, milestoneIndexForStatus(event.status));
+    const rawIdx = milestoneIndexForStatus(event.status);
+    const milestoneIdx = rawIdx >= 0 ? rawIdx : currentMilestoneIdx;
     buckets[milestoneIdx].push(event);
   }
   for (const bucket of buckets) {
@@ -61,8 +63,8 @@ export function MilestoneStepper({
   }
 
   const milestones = PROGRESS_MILESTONES;
-  const buckets = bucketEventsByMilestone(events);
   const currentMilestoneIdx = Math.max(0, milestoneIndexForStatus(currentStatus));
+  const buckets = bucketEventsByMilestone(events, currentMilestoneIdx);
 
   return (
     <div className="flex flex-col">

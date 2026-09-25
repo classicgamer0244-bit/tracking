@@ -151,7 +151,7 @@ d("Tenant isolation, shipment lifecycle, and messaging (requires DATABASE_URL)",
     mockSessionState.user = null;
   });
 
-  it("lets a merchant owner create a shipment with an auto-generated tracking number and initial event", async () => {
+  it("lets a merchant owner create a shipment with an auto-generated tracking number and auto-generated pickup/departure events", async () => {
     mockSessionState.user = ownerA;
     const result = await createShipmentAction({ success: false }, formData(baseShipmentFields));
     expect(result.success).toBe(true);
@@ -159,13 +159,17 @@ d("Tenant isolation, shipment lifecycle, and messaging (requires DATABASE_URL)",
 
     const shipment = await prisma.shipment.findUnique({
       where: { id: result.id },
-      include: { trackingEvents: true },
+      include: { trackingEvents: { orderBy: { occurredAt: "asc" } } },
     });
     expect(shipment).not.toBeNull();
     expect(shipment!.trackingNumber).toMatch(/^STK-/);
     expect(shipment!.merchantId).toBe(merchantAId);
-    expect(shipment!.trackingEvents).toHaveLength(1);
-    expect(shipment!.trackingEvents[0].status).toBe("SHIPMENT_CREATED");
+    expect(shipment!.status).toBe("DEPARTED_FACILITY");
+    expect(shipment!.trackingEvents.map((e) => e.status)).toEqual([
+      "SHIPMENT_CREATED",
+      "PICKED_UP",
+      "DEPARTED_FACILITY",
+    ]);
   });
 
   it("blocks a Customer Support staff member from creating a shipment (permission matrix)", async () => {
