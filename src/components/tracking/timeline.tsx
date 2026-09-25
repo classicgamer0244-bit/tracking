@@ -6,7 +6,6 @@ import type { ShipmentStatus } from "@prisma/client";
 import {
   SHIPMENT_STATUS_LABELS,
   isException,
-  statusIndex,
   PROGRESS_MILESTONES,
   milestoneIndexForStatus,
 } from "@/lib/shipment-status";
@@ -20,20 +19,18 @@ export type TimelineEvent = {
   description: string;
 };
 
-/** Groups events chronologically into the milestone they belong under. An
- * event's own status decides its bucket; exception statuses (no fixed
- * position in the order) fall into whichever milestone was active when they
- * were recorded, since the pointer only advances on a real, ordered status. */
+/** Groups events under the milestone their own status maps to — independent
+ * of when they were recorded, so one backdated or out-of-order event can't
+ * drag every later event into the wrong bucket. Exception statuses (no fixed
+ * position in the order) fall back to bucket 0. */
 function bucketEventsByMilestone(events: TimelineEvent[]): TimelineEvent[][] {
   const buckets: TimelineEvent[][] = PROGRESS_MILESTONES.map(() => []);
-  const sorted = [...events].sort(
-    (a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime(),
-  );
-  let pointer = 0;
-  for (const event of sorted) {
-    const milestoneIdx = milestoneIndexForStatus(event.status);
-    if (milestoneIdx >= 0) pointer = Math.max(pointer, milestoneIdx);
-    buckets[pointer].push(event);
+  for (const event of events) {
+    const milestoneIdx = Math.max(0, milestoneIndexForStatus(event.status));
+    buckets[milestoneIdx].push(event);
+  }
+  for (const bucket of buckets) {
+    bucket.sort((a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime());
   }
   return buckets;
 }
@@ -63,17 +60,24 @@ export function MilestoneStepper({
     );
   }
 
-  const currentIdx = statusIndex(currentStatus);
   const milestones = PROGRESS_MILESTONES;
   const buckets = bucketEventsByMilestone(events);
+  const currentMilestoneIdx = Math.max(0, milestoneIndexForStatus(currentStatus));
+  // A milestone counts as reached if the shipment's current status covers it,
+  // OR if any recorded event's own status already reached it — so a step
+  // stays checked (with its history visible) even if the shipment's overall
+  // status was later corrected back to an earlier one.
+  const highestMilestoneIdx = buckets.reduce(
+    (max, bucket, i) => (bucket.length > 0 ? Math.max(max, i) : max),
+    currentMilestoneIdx,
+  );
 
   return (
     <div className="flex flex-col">
       {milestones.map((status, i) => {
-        const idx = statusIndex(status);
-        const done = currentIdx >= idx;
-        const lineAfterDone = i === milestones.length - 1 ? false : currentIdx > idx;
-        const isCurrent = status === currentStatus || (i === milestones.length - 1 ? false : idx <= currentIdx && statusIndex(milestones[i + 1]) > currentIdx);
+        const done = i <= highestMilestoneIdx;
+        const lineAfterDone = i === milestones.length - 1 ? false : i < highestMilestoneIdx;
+        const isCurrent = i === currentMilestoneIdx;
         const isLast = i === milestones.length - 1;
         const stepEvents = done ? buckets[i].slice().reverse() : [];
         return (
