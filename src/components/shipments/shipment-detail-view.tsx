@@ -128,11 +128,10 @@ export async function ShipmentDetailView({
             <CardHeader>
               <CardTitle className="text-base">Route</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <CardContent className="grid gap-4 sm:grid-cols-3">
               <Row label="Origin" value={shipment.origin} />
               <Row label="Destination" value={shipment.destination} />
               <Row label="Current location" value={shipment.currentLocation ?? "—"} />
-              <Row label="Departure" value={shipment.departureLocation ?? "—"} />
             </CardContent>
           </Card>
 
