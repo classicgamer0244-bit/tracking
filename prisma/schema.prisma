@@ -153,6 +153,7 @@ model Shipment {
   dimensions      String?
   service         String
   cost            Float?
+  currency        String   @default("USD")
   insurance       Boolean  @default(false)
   estimatedDelivery DateTime?
   status          ShipmentStatus @default(SHIPMENT_CREATED)

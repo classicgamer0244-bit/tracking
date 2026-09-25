@@ -19,6 +19,7 @@ function toShipmentData(input: ShipmentFormInput) {
     weight: input.weight ?? null,
     service: input.service,
     cost: input.cost ?? null,
+    currency: input.currency,
     insurance: input.insurance,
     estimatedDelivery: input.estimatedDelivery ? new Date(input.estimatedDelivery) : null,
     origin: input.origin,

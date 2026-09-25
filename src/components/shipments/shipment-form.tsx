@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CURRENCY_OPTIONS } from "@/lib/validators/shipment";
 import type { ActionResult } from "@/actions/shipments";
 
 export type ShipmentFormValues = {
@@ -21,6 +23,7 @@ export type ShipmentFormValues = {
   dimensions?: string;
   service?: string;
   cost?: number | null;
+  currency?: string;
   insurance?: boolean;
   estimatedDelivery?: string;
   origin?: string;
@@ -81,7 +84,26 @@ export function ShipmentForm({
         <Field label="Package description" name="description" defaultValue={dv.description} required className="sm:col-span-2" />
         <Field label="Quantity" name="quantity" type="number" min={1} defaultValue={dv.quantity ?? 1} />
         <Field label="Weight (kg)" name="weight" type="number" step="0.01" defaultValue={dv.weight ?? undefined} />
-        <Field label="Shipping cost" name="cost" type="number" step="0.01" defaultValue={dv.cost ?? undefined} />
+        <div>
+          <Label htmlFor="cost" className="mb-2 block">
+            Shipping cost
+          </Label>
+          <div className="flex gap-2">
+            <Select name="currency" defaultValue={dv.currency ?? "USD"}>
+              <SelectTrigger className="w-[110px] shrink-0">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CURRENCY_OPTIONS.map((c) => (
+                  <SelectItem key={c.code} value={c.code}>
+                    {c.code}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input id="cost" name="cost" type="number" step="0.01" defaultValue={dv.cost ?? undefined} className="flex-1" />
+          </div>
+        </div>
         <Field label="Estimated delivery" name="estimatedDelivery" type="date" defaultValue={dv.estimatedDelivery} />
         <div className="flex items-center gap-2 pt-6">
           <Switch id="insurance" name="insurance" defaultChecked={dv.insurance} />

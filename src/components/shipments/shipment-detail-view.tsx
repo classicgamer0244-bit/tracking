@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink, Printer } from "lucide-react";
 import { getShipmentDetail } from "@/lib/queries/shipments";
+import { formatMoney } from "@/lib/format";
 import { ShipmentStatusBadge } from "@/components/tracking/status-badge";
 import { CopyButton } from "@/components/shipments/copy-button";
 import { MilestoneStepper, EventHistoryList } from "@/components/tracking/timeline";
@@ -94,7 +95,7 @@ export async function ShipmentDetailView({
               <Row label="Quantity" value={String(shipment.quantity)} />
               <Row label="Weight" value={shipment.weight ? `${shipment.weight} kg` : "—"} />
               <Row label="Service" value={shipment.service} />
-              <Row label="Cost" value={shipment.cost != null ? `$${shipment.cost.toFixed(2)}` : "—"} />
+              <Row label="Cost" value={shipment.cost != null ? formatMoney(shipment.cost, shipment.currency) : "—"} />
               <Row label="Insured" value={shipment.insurance ? "Yes" : "No"} />
               <Row
                 label="Est. delivery"
@@ -211,6 +212,7 @@ export async function ShipmentDetailView({
                 dimensions: shipment.dimensions ?? undefined,
                 service: shipment.service,
                 cost: shipment.cost ?? undefined,
+                currency: shipment.currency,
                 insurance: shipment.insurance,
                 estimatedDelivery: shipment.estimatedDelivery
                   ? new Date(shipment.estimatedDelivery).toISOString().slice(0, 10)

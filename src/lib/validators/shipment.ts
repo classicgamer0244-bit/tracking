@@ -2,6 +2,23 @@ import { z } from "zod";
 
 const optionalStr = () => z.string().optional().or(z.literal(""));
 
+export const CURRENCY_OPTIONS = [
+  { code: "USD", label: "USD — US Dollar" },
+  { code: "EUR", label: "EUR — Euro" },
+  { code: "GBP", label: "GBP — British Pound" },
+  { code: "CAD", label: "CAD — Canadian Dollar" },
+  { code: "AUD", label: "AUD — Australian Dollar" },
+  { code: "NGN", label: "NGN — Nigerian Naira" },
+  { code: "GHS", label: "GHS — Ghanaian Cedi" },
+  { code: "ZAR", label: "ZAR — South African Rand" },
+  { code: "INR", label: "INR — Indian Rupee" },
+  { code: "JPY", label: "JPY — Japanese Yen" },
+  { code: "CNY", label: "CNY — Chinese Yuan" },
+  { code: "AED", label: "AED — UAE Dirham" },
+] as const;
+
+export const CURRENCY_CODES = CURRENCY_OPTIONS.map((c) => c.code);
+
 export const shipmentFormSchema = z.object({
   trackingNumber: optionalStr(),
   referenceId: optionalStr(),
@@ -12,6 +29,7 @@ export const shipmentFormSchema = z.object({
   dimensions: optionalStr(),
   service: z.string().min(1, "Shipping service is required"),
   cost: z.coerce.number().min(0).optional(),
+  currency: z.enum(CURRENCY_CODES as [string, ...string[]]).default("USD"),
   insurance: z.coerce.boolean().default(false),
   estimatedDelivery: optionalStr(),
 

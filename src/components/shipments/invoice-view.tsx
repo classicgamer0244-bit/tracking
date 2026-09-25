@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getShipmentDetail } from "@/lib/queries/shipments";
+import { formatMoney } from "@/lib/format";
 import { LogoMark } from "@/components/brand/logo-mark";
 import { PrintInvoiceButton } from "@/components/shipments/print-invoice-button";
 
@@ -111,7 +112,7 @@ export async function InvoiceView({ shipmentId, basePath }: { shipmentId: string
               <td className="py-3 text-right">{shipment.quantity}</td>
               <td className="py-3 text-right">{shipment.weight ? `${shipment.weight} kg` : "—"}</td>
               <td className="py-3 text-right font-medium">
-                {shipment.cost != null ? `$${shipment.cost.toFixed(2)}` : "—"}
+                {shipment.cost != null ? formatMoney(shipment.cost, shipment.currency) : "—"}
               </td>
             </tr>
           </tbody>
@@ -122,7 +123,7 @@ export async function InvoiceView({ shipmentId, basePath }: { shipmentId: string
             <div className="flex items-center justify-between border-t pt-2">
               <span className="font-medium">Total</span>
               <span className="font-heading text-lg font-bold">
-                {shipment.cost != null ? `$${shipment.cost.toFixed(2)}` : "—"}
+                {shipment.cost != null ? formatMoney(shipment.cost, shipment.currency) : "—"}
               </span>
             </div>
           </div>
