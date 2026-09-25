@@ -96,7 +96,6 @@ export function ShipmentForm({
 
       <Section title="Sender information">
         <Field label="Sender name" name="senderName" defaultValue={dv.senderName} required />
-        <Field label="Company" name="senderCompany" defaultValue={dv.senderCompany} />
         <Field label="Email" name="senderEmail" type="email" defaultValue={dv.senderEmail} />
         <Field label="Phone" name="senderPhone" defaultValue={dv.senderPhone} />
         <Field label="Address" name="senderAddress" defaultValue={dv.senderAddress} required className="sm:col-span-2" />
@@ -108,7 +107,6 @@ export function ShipmentForm({
 
       <Section title="Recipient information">
         <Field label="Recipient name" name="recipientName" defaultValue={dv.recipientName} required />
-        <Field label="Company" name="recipientCompany" defaultValue={dv.recipientCompany} />
         <Field label="Email" name="recipientEmail" type="email" defaultValue={dv.recipientEmail} />
         <Field label="Phone" name="recipientPhone" defaultValue={dv.recipientPhone} />
         <Field label="Address" name="recipientAddress" defaultValue={dv.recipientAddress} required className="sm:col-span-2" />

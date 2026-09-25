@@ -104,7 +104,6 @@ export async function ShipmentDetailView({
 
             <InfoCard title="Sender">
               <Row label="Name" value={shipment.senderName} />
-              <Row label="Company" value={shipment.senderCompany ?? "—"} />
               <Row label="Email" value={shipment.senderEmail ?? "—"} />
               <Row label="Phone" value={shipment.senderPhone ?? "—"} />
               <Row
@@ -115,7 +114,6 @@ export async function ShipmentDetailView({
 
             <InfoCard title="Recipient">
               <Row label="Name" value={shipment.recipientName} />
-              <Row label="Company" value={shipment.recipientCompany ?? "—"} />
               <Row label="Email" value={shipment.recipientEmail ?? "—"} />
               <Row label="Phone" value={shipment.recipientPhone ?? "—"} />
               <Row
