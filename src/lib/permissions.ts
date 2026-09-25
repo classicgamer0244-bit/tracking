@@ -9,7 +9,6 @@ export type MerchantAction =
   | "shipment:create"
   | "shipment:edit"
   | "shipment:updateStatus"
-  | "shipment:addEvent"
   | "shipment:delete"
   | "shipment:archive"
   | "shipment:view"
@@ -30,7 +29,6 @@ const MATRIX: Record<StaffRole | "OWNER", Set<MerchantAction>> = {
     "shipment:create",
     "shipment:edit",
     "shipment:updateStatus",
-    "shipment:addEvent",
     "shipment:delete",
     "shipment:archive",
     "shipment:view",
@@ -44,7 +42,6 @@ const MATRIX: Record<StaffRole | "OWNER", Set<MerchantAction>> = {
     "shipment:create",
     "shipment:edit",
     "shipment:updateStatus",
-    "shipment:addEvent",
     "shipment:archive",
     "shipment:view",
     "message:view",
@@ -55,7 +52,6 @@ const MATRIX: Record<StaffRole | "OWNER", Set<MerchantAction>> = {
     "shipment:create",
     "shipment:edit",
     "shipment:updateStatus",
-    "shipment:addEvent",
     "shipment:archive",
     "shipment:view",
     "message:view",

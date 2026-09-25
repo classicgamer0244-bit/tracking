@@ -61,16 +61,3 @@ export const shipmentFormSchema = z.object({
 });
 
 export type ShipmentFormInput = z.infer<typeof shipmentFormSchema>;
-
-export const trackingEventSchema = z.object({
-  shipmentId: z.string().min(1),
-  status: z.string().min(1),
-  location: z.string().min(1, "Location is required"),
-  date: z.string().min(1, "Date is required"),
-  time: z.string().min(1, "Time is required"),
-  description: z.string().min(1, "Description is required"),
-  internalNote: z.string().optional().or(z.literal("")),
-  visibility: z.enum(["PUBLIC", "INTERNAL"]).default("PUBLIC"),
-});
-
-export type TrackingEventInput = z.infer<typeof trackingEventSchema>;

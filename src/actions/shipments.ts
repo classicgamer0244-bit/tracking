@@ -7,7 +7,7 @@ import { requirePermission } from "@/lib/permissions";
 import { recordAudit } from "@/lib/audit";
 import { notifyMerchant } from "@/lib/notifications";
 import { generateTrackingNumber, generateReferenceId } from "@/lib/tracking-number";
-import { shipmentFormSchema, trackingEventSchema, type ShipmentFormInput } from "@/lib/validators/shipment";
+import { shipmentFormSchema, type ShipmentFormInput } from "@/lib/validators/shipment";
 import { SHIPMENT_STATUS_LABELS } from "@/lib/shipment-status";
 import type { ShipmentStatus } from "@prisma/client";
 
@@ -209,67 +209,6 @@ export async function updateShipmentStatusAction(input: {
   revalidatePath(`/super-admin/shipments/${input.shipmentId}`);
   revalidatePath("/merchant/dashboard");
   return { success: true, id: updated.id };
-}
-
-export async function addTrackingEventAction(
-  _prevState: ActionResult,
-  formData: FormData,
-): Promise<ActionResult> {
-  const raw = Object.fromEntries(formData.entries());
-  const parsed = trackingEventSchema.safeParse(raw);
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
-  }
-
-  const { actor, shipment } = await loadShipmentForActor(parsed.data.shipmentId);
-  if (actor.role !== "SUPER_ADMIN") {
-    requirePermission({ role: actor.role, staffRole: actor.staffRole }, "shipment:addEvent");
-  }
-
-  const occurredAt = new Date(`${parsed.data.date}T${parsed.data.time}`);
-  const status = parsed.data.status as ShipmentStatus;
-
-  await prisma.$transaction([
-    prisma.trackingEvent.create({
-      data: {
-        shipmentId: parsed.data.shipmentId,
-        status,
-        location: parsed.data.location,
-        occurredAt,
-        description: parsed.data.description,
-        internalNote: parsed.data.internalNote || null,
-        visibility: parsed.data.visibility,
-        createdByUserId: actor.role === "SUPER_ADMIN" ? null : actor.id,
-      },
-    }),
-    prisma.shipment.update({
-      where: { id: parsed.data.shipmentId },
-      data: { status, currentLocation: parsed.data.location },
-    }),
-  ]);
-
-  await notifyMerchant({
-    merchantId: shipment.merchantId,
-    type: "SHIPMENT_STATUS_CHANGED",
-    title: `Tracking event added — ${shipment.trackingNumber}`,
-    body: parsed.data.description,
-    entityType: "Shipment",
-    entityId: shipment.id,
-  });
-
-  await recordAudit({
-    actorUserId: actor.id,
-    actorLabel: actor.name,
-    action: "shipment.tracking_event_added",
-    entityType: "TrackingEvent",
-    entityId: shipment.id,
-    merchantId: shipment.merchantId,
-    newValue: parsed.data,
-  });
-
-  revalidatePath(`/merchant/shipments/${parsed.data.shipmentId}`);
-  revalidatePath(`/super-admin/shipments/${parsed.data.shipmentId}`);
-  return { success: true, id: parsed.data.shipmentId };
 }
 
 export async function archiveShipmentAction(shipmentId: string, archived: boolean): Promise<ActionResult> {

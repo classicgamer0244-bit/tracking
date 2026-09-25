@@ -12,7 +12,6 @@ export default async function SuperAdminShipmentDetailPage({ params }: { params:
       isSuperAdmin
       canEdit
       canUpdateStatus
-      canAddEvent
     />
   );
 }

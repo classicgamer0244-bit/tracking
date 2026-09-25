@@ -7,7 +7,6 @@ import { ShipmentStatusBadge } from "@/components/tracking/status-badge";
 import { CopyButton } from "@/components/shipments/copy-button";
 import { MilestoneStepper, EventHistoryList } from "@/components/tracking/timeline";
 import { StatusUpdateControl } from "@/components/shipments/status-update-control";
-import { AddTrackingEventForm } from "@/components/shipments/add-tracking-event-form";
 import { ShipmentForm } from "@/components/shipments/shipment-form";
 import { ReassignMerchantControl } from "@/components/shipments/reassign-merchant-control";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,14 +20,12 @@ export async function ShipmentDetailView({
   isSuperAdmin,
   canEdit,
   canUpdateStatus,
-  canAddEvent,
 }: {
   shipmentId: string;
   basePath: string;
   isSuperAdmin: boolean;
   canEdit: boolean;
   canUpdateStatus: boolean;
-  canAddEvent: boolean;
 }) {
   const shipment = await getShipmentDetail(shipmentId);
   if (!shipment) notFound();
@@ -74,7 +71,6 @@ export async function ShipmentDetailView({
               currentLocation={shipment.currentLocation ?? shipment.origin}
             />
           )}
-          {canAddEvent && <AddTrackingEventForm shipmentId={shipment.id} />}
           {isSuperAdmin && <ReassignMerchantControl shipmentId={shipment.id} currentMerchantId={shipment.merchantId} />}
         </div>
       </div>

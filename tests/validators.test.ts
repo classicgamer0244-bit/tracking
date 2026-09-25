@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { createMerchantSchema } from "@/lib/validators/merchant";
-import { shipmentFormSchema, trackingEventSchema } from "@/lib/validators/shipment";
+import { shipmentFormSchema } from "@/lib/validators/shipment";
 import { contactMerchantSchema } from "@/lib/validators/message";
 
 describe("createMerchantSchema", () => {
@@ -62,32 +62,6 @@ describe("shipmentFormSchema", () => {
     const result = shipmentFormSchema.parse(valid);
     expect(result.quantity).toBe(1);
     expect(result.insurance).toBe(false);
-  });
-});
-
-describe("trackingEventSchema", () => {
-  it("requires location, date, time, and description", () => {
-    const result = trackingEventSchema.safeParse({
-      shipmentId: "abc",
-      status: "IN_TRANSIT",
-      location: "",
-      date: "2026-01-01",
-      time: "10:00",
-      description: "",
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it("defaults visibility to PUBLIC", () => {
-    const result = trackingEventSchema.parse({
-      shipmentId: "abc",
-      status: "IN_TRANSIT",
-      location: "Accra",
-      date: "2026-01-01",
-      time: "10:00",
-      description: "Left the facility",
-    });
-    expect(result.visibility).toBe("PUBLIC");
   });
 });
 

@@ -18,7 +18,6 @@ export default async function MerchantShipmentDetailPage({ params }: { params: P
       isSuperAdmin={false}
       canEdit={can(user, "shipment:edit")}
       canUpdateStatus={can(user, "shipment:updateStatus")}
-      canAddEvent={can(user, "shipment:addEvent")}
     />
   );
 }
