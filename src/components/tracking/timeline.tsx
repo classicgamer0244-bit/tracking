@@ -63,20 +63,16 @@ export function MilestoneStepper({
   const milestones = PROGRESS_MILESTONES;
   const buckets = bucketEventsByMilestone(events);
   const currentMilestoneIdx = Math.max(0, milestoneIndexForStatus(currentStatus));
-  // A milestone counts as reached if the shipment's current status covers it,
-  // OR if any recorded event's own status already reached it — so a step
-  // stays checked (with its history visible) even if the shipment's overall
-  // status was later corrected back to an earlier one.
-  const highestMilestoneIdx = buckets.reduce(
-    (max, bucket, i) => (bucket.length > 0 ? Math.max(max, i) : max),
-    currentMilestoneIdx,
-  );
 
   return (
     <div className="flex flex-col">
       {milestones.map((status, i) => {
-        const done = i <= highestMilestoneIdx;
-        const lineAfterDone = i === milestones.length - 1 ? false : i < highestMilestoneIdx;
+        // A milestone is only checked off once an actual Update status call
+        // recorded an event for it — no inferring it from later progress, so
+        // a skipped step (e.g. no explicit "Picked Up") stays pending even
+        // after the shipment has moved further along.
+        const done = buckets[i].length > 0;
+        const lineAfterDone = i === milestones.length - 1 ? false : done;
         const isCurrent = i === currentMilestoneIdx;
         const isLast = i === milestones.length - 1;
         const stepEvents = done ? buckets[i].slice().reverse() : [];
