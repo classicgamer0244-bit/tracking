@@ -93,7 +93,6 @@ export async function ShipmentDetailView({
               <Row label="Description" value={shipment.description} />
               <Row label="Quantity" value={String(shipment.quantity)} />
               <Row label="Weight" value={shipment.weight ? `${shipment.weight} kg` : "—"} />
-              <Row label="Dimensions" value={shipment.dimensions ?? "—"} />
               <Row label="Service" value={shipment.service} />
               <Row label="Cost" value={shipment.cost != null ? `$${shipment.cost.toFixed(2)}` : "—"} />
               <Row label="Insured" value={shipment.insurance ? "Yes" : "No"} />

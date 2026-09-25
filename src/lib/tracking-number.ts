@@ -12,3 +12,9 @@ export function generateMerchantCode(): string {
   const nanoShort = customAlphabet(alphabet, 6);
   return `MCH-${nanoShort()}`;
 }
+
+/** Generates a human-friendly order reference like `ORD-7F3K9Q`. */
+export function generateReferenceId(): string {
+  const nanoShort = customAlphabet(alphabet, 6);
+  return `ORD-${nanoShort()}`;
+}

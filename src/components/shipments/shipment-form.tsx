@@ -76,14 +76,11 @@ export function ShipmentForm({
   return (
     <form action={formAction} className="space-y-6">
       <Section title="Shipment information" description="Core details about the package being shipped.">
-        <Field label="Tracking number" name="trackingNumber" defaultValue={dv.trackingNumber} placeholder="Auto-generated if left blank" disabled={mode === "edit"} />
-        <Field label="Reference / order ID" name="referenceId" defaultValue={dv.referenceId} />
         <Field label="Shipment type" name="shipmentType" defaultValue={dv.shipmentType} required placeholder="Parcel, Document, Freight..." />
         <Field label="Shipping service" name="service" defaultValue={dv.service} required placeholder="Standard, Express..." />
         <Field label="Package description" name="description" defaultValue={dv.description} required className="sm:col-span-2" />
         <Field label="Quantity" name="quantity" type="number" min={1} defaultValue={dv.quantity ?? 1} />
         <Field label="Weight (kg)" name="weight" type="number" step="0.01" defaultValue={dv.weight ?? undefined} />
-        <Field label="Dimensions" name="dimensions" defaultValue={dv.dimensions} placeholder="L x W x H (cm)" />
         <Field label="Shipping cost" name="cost" type="number" step="0.01" defaultValue={dv.cost ?? undefined} />
         <Field label="Estimated delivery" name="estimatedDelivery" type="date" defaultValue={dv.estimatedDelivery} />
         <div className="flex items-center gap-2 pt-6">

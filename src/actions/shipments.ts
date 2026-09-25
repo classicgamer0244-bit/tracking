@@ -6,19 +6,17 @@ import { requireMerchantUser, requireSuperAdmin, requireUser } from "@/lib/sessi
 import { requirePermission } from "@/lib/permissions";
 import { recordAudit } from "@/lib/audit";
 import { notifyMerchant } from "@/lib/notifications";
-import { generateTrackingNumber } from "@/lib/tracking-number";
+import { generateTrackingNumber, generateReferenceId } from "@/lib/tracking-number";
 import { shipmentFormSchema, trackingEventSchema, type ShipmentFormInput } from "@/lib/validators/shipment";
 import { SHIPMENT_STATUS_LABELS } from "@/lib/shipment-status";
 import type { ShipmentStatus } from "@prisma/client";
 
 function toShipmentData(input: ShipmentFormInput) {
   return {
-    referenceId: input.referenceId || null,
     shipmentType: input.shipmentType,
     description: input.description,
     quantity: input.quantity,
     weight: input.weight ?? null,
-    dimensions: input.dimensions || null,
     service: input.service,
     cost: input.cost ?? null,
     insurance: input.insurance,
@@ -64,17 +62,13 @@ export async function createShipmentAction(
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
-  let trackingNumber = parsed.data.trackingNumber?.trim();
-  if (!trackingNumber) {
-    trackingNumber = generateTrackingNumber();
-  } else {
-    const existing = await prisma.shipment.findUnique({ where: { trackingNumber } });
-    if (existing) return { success: false, error: "That tracking number is already in use." };
-  }
+  const trackingNumber = generateTrackingNumber();
+  const referenceId = generateReferenceId();
 
   const shipment = await prisma.shipment.create({
     data: {
       trackingNumber,
+      referenceId,
       merchantId: actor.merchantId,
       status: "SHIPMENT_CREATED",
       ...toShipmentData(parsed.data),
